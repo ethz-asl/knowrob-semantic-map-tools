@@ -1,0 +1,5 @@
+knowrob-semantic-map-tools (0.1-1) unstable; urgency=low
+
+  * Initial commit with Prolog OWL parser
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 12 Mar 2015 09:03:00 +0100
