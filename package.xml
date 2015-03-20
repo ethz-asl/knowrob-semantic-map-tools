@@ -2,7 +2,9 @@
 <package>
   <name>knowrob_semantic_map_tools</name>
   <version>0.1.0</version>
-  <description>The knowrob_semantic_map_tools package</description>
+  <description>
+    A collection of tools for working with Knowrob semantic maps.
+  </description>
 
   <maintainer email="ralf.kaestner@gmail.com">Ralf Kaestner</maintainer>
 
