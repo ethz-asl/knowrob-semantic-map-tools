@@ -1,0 +1,78 @@
+clients:
+  generate_semantic_map_owl:
+    service: "/knowrob_semantic_map_to_owl/generate_owl_map"
+  prolog_query:
+    service: "/json_prolog/simple_query"
+  prolog_next_solution:
+    service: "/json_prolog/next_solution"
+  prolog_finish:
+    service: "/json_prolog/finish"
+
+map:
+  frame_id: "http://www.example.com/map.owl#"
+  stamp: 2015-03-12T15:08:00
+  objects:
+    - id: 1
+      type: "Cupboard"
+      size:
+        x: 0.5
+        y: 0.6
+        z: 0.7
+      position:
+        x: 0
+        y: 0
+        z: 0
+      orientation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+      part_of: 0
+    - id: 2
+      type: "Door"
+      size:
+        x: 0.01
+        y: 0.6
+        z: 0.7
+      position:
+        x: 0.26
+        y: 0
+        z: 0
+      orientation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+      part_of: 1
+    - id: 3
+      type: "HingedJoint"
+      size:
+        x: 0.01
+        y: 0.007
+        z: 0.006
+      position:
+        x: 0.255
+        y: -0.3
+        z: -0.003
+      orientation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+      part_of: 2
+    - id: 4
+      type: "Handle"
+      size:
+        x: 0.05
+        y: 0.06
+        z: 0.07
+      position:
+        x: 0.26
+        y: 0
+        z: 0
+      orientation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+      part_of: 2

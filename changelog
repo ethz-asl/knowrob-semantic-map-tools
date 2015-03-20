@@ -1,3 +1,10 @@
+knowrob-semantic-map-tools (0.1-2) unstable; urgency=low
+
+  * Python classes for interfacing prolog
+  * Revised spawn_owl.py
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 20 Mar 2015 07:05:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-1) unstable; urgency=low
 
   * Initial commit with Prolog OWL parser
