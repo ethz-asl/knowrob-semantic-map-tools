@@ -3,12 +3,10 @@ from rospy.rostime import *
 
 import time
 
-from tf_conversions.posemath import *
-
 from geometry_msgs.msg import Pose
 
-from knowrob_semantic_map_msgs.msg import SemMap, SemMapObject
-from knowrob_semantic_map_msgs.srv import GenerateSemanticMapOWL
+from knowrob_semantic_map_msgs.msg import *
+from knowrob_semantic_map_msgs.srv import *
 
 import Exception
 
@@ -20,98 +18,121 @@ class Client(object):
     
     map = rospy.get_param("~map")
     
-    self.map = {}
+    self.map = SemMap()
     if "frame_id" in map:
-      self.map["frame_id"] = map["frame_id"]
+      self.map.header.frame_id = map["frame_id"]
     else:
-      self.map["frame_id"] = "http://www.example.com/map.owl#"
+      self.map.header.frame_id = "semantic_map"
 
     if "stamp" in map:
-      self.map["stamp"] = Time.from_sec(time.mktime(
+      self.map.header.stamp = Time.from_sec(time.mktime(
         time.strptime(map["stamp"].value, "%Y%m%dT%H:%M:%S")))
     else:
-      self.map["stamp"] = Time.now()
+      self.map.header.stamp = Time.now()
 
-    self.map["objects"] = []
+    if "namespace" in map:
+      self.map.namespace = map["namespace"]
+    else:
+      self.map.namespace = "http://asl.ethz.ch/example/semantic_map.owl"
+
+    if "imports" in map:
+      self.map.imports = map["imports"]
+
+    if "address" in map:
+      address = map["address"]
+      
+      if "room_nr" in address:
+        self.map.address.room_nr = str(address["room_nr"])
+      if "floor_nr" in address:
+        self.map.address.floor_nr = str(address["floor_nr"])
+      if "street_nr" in address:
+        self.map.address.street_nr = str(address["street_nr"])
+      if "street_name" in address:
+        self.map.address.street_name = address["street_name"]
+      if "city_name" in address:
+        self.map.address.city_name = address["city_name"]
+
+    self.object_properties = {}
+    if "object_properties" in map:
+      object_properties = map["object_properties"]
+      
+      for key in object_properties:
+        value = object_properties[key]
+        self.object_properties[key] = value["id"]
+
+    self.data_properties = {}
+    if "data_properties" in map:
+      data_properties = map["data_properties"]
+      
+      for key in data_properties:
+        value = data_properties[key]
+        self.data_properties[key] = value["id"]
+        
     if "objects" in map:
       objects = map["objects"]
       
       for obj in objects:
-        object = {}
+        object = SemMapObject()
         
-        object["id"] = obj["id"]
-        object["type"] = obj["type"]
+        object.id = str(obj["id"])
+        object.type = obj["type"]
         
         if "size" in obj:
-          object["size"] = [obj["size"]["x"], 
-                            obj["size"]["y"],
-                            obj["size"]["z"]]
-        else:
-          object["size"] = [0, 0, 0]
+          object.size.x = obj["size"]["x"]
+          object.size.y = obj["size"]["y"]
+          object.size.z = obj["size"]["z"]
 
-        position = Point()
         if "position" in obj:
-          position.x = obj["position"]["x"];
-          position.y = obj["position"]["y"];
-          position.z = obj["position"]["z"];
-        else:
-          position.x = 0
-          position.y = 0
-          position.z = 0
+          object.pose.position.x = obj["position"]["x"];
+          object.pose.position.y = obj["position"]["y"];
+          object.pose.position.z = obj["position"]["z"];
           
-        orientation = Quaternion()
         if "orientation" in obj:
-          orientation.w = obj["orientation"]["w"]
-          orientation.x = obj["orientation"]["x"]
-          orientation.y = obj["orientation"]["y"]
-          orientation.z = obj["orientation"]["z"]
-        else:
-          orientation.w = 1
-          orientation.x = 0
-          orientation.y = 0
-          orientation.z = 0
+          object.pose.orientation.w = obj["orientation"]["w"]
+          object.pose.orientation.x = obj["orientation"]["x"]
+          object.pose.orientation.y = obj["orientation"]["y"]
+          object.pose.orientation.z = obj["orientation"]["z"]
 
-        pose = Pose()
-        pose.position = position
-        pose.orientation = orientation
-        
-        frame = fromMsg(pose)
-        object["pose"] = toMatrix(frame).tolist()
-        
         if "part_of" in obj:
-          object["part_of"] = obj["part_of"]
-        else:
-          object["part_of"] = 0
+          object.part_of = str(obj["part_of"])
           
-        self.map["objects"].append(object)
+        self.map.objects.append(object)
+        
+        for key in obj:
+          if key in self.object_properties:
+            object_property = SemMapObjectProperty()
+
+            object_property.id = self.object_properties[key]
+            object_property.subject = object.id
+            object_property.object = str(obj[key])
+            
+            self.map.object_properties.append(object_property)
+          if key in self.data_properties:
+            data_property = SemMapDataProperty()
+
+            data_property.id = self.data_properties[key]
+            data_property.subject = object.id
+            
+            if isinstance(obj[key], bool):
+              data_property.value_type = SemMapDataProperty.VALUE_TYPE_BOOL
+            elif isinstance(obj[key], float):
+              data_property.value_type = SemMapDataProperty.VALUE_TYPE_FLOAT
+            elif isinstance(obj[key], int):
+              data_property.value_type = SemMapDataProperty.VALUE_TYPE_INT
+            else:
+              data_property.value_type = SemMapDataProperty.VALUE_TYPE_STRING
+            
+            data_property.value = str(obj[key])
+            
+            self.map.data_properties.append(data_property)
   
   def getOwl(self):
-    map = SemMap()
-
-    map.header.frame_id = self.map["frame_id"]
-    map.header.stamp = self.map["stamp"]
-    
-    for object in self.map["objects"]:
-      obj = SemMapObject()
-      
-      obj.id = object["id"]
-      obj.type = object["type"]
-      
-      obj.depth = object["size"][1]
-      obj.width = object["size"][0]
-      obj.height = object["size"][2]
-    
-      obj.pose = [T_ij for T_i in object["pose"] for T_ij in T_i]
-      obj.partOf = object["part_of"]
-      
-      map.objects.append(obj)
-      
     rospy.wait_for_service(self.generateSemanticMapOWLService)
     
     try:
       request = rospy.ServiceProxy(self.generateSemanticMapOWLService,
         GenerateSemanticMapOWL)
-      response = request(map = map)
+      response = request(map = self.map)
     except rospy.ServiceException, exception:
       raise Exception(
         "GenerateSemanticMapOWL service request failed: %s" % exception)

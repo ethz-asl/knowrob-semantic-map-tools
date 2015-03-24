@@ -16,7 +16,6 @@
 
   <run_depend>rospy</run_depend>
   <run_depend>geometry_msgs</run_depend>
-  <run_depend>tf_conversions</run_depend>
   <run_depend>rosprolog</run_depend>
   <run_depend>json_prolog</run_depend>
   <run_depend>json_prolog_msgs</run_depend>

@@ -13,7 +13,6 @@ catkin_package(
   DEPENDS
     rospy
     geometry_msgs
-    tf_conversions
     rosprolog
     json_prolog
     json_prolog_msgs
