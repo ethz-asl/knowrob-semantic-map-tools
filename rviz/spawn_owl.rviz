@@ -51,10 +51,10 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: visualization_marker_array
+      Marker Topic: /spawn_owl/markers
       Name: MarkerArray
       Namespaces:
-        {}
+        SemanticMap: true
       Queue Size: 100
       Value: true
   Enabled: true

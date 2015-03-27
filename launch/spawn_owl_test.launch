@@ -1,9 +1,7 @@
 <launch>
   <arg name="config_file" default="$(find knowrob_semantic_map_tools)/config/semantic_map.yaml"/>
-  <arg name="rviz" default="false"/>
-  <arg name="display_config" default="$(find knowrob_semantic_map_tools)/rviz/spawn_owl.rviz"/>
   
-  <node name="spawn_owl" pkg="knowrob_semantic_map_tools" type="spawn_owl.py" respawn="false" output="screen">
+  <node name="spawn_owl_test" pkg="knowrob_semantic_map_tools" type="spawn_owl_test.py" respawn="false" output="screen">
     <rosparam command="load" file="$(arg config_file)"/>
   </node>
   
@@ -11,6 +9,4 @@
   
   <param name="initial_package" type="string" value="knowrob_semantic_map_tools"/>
   <node name="json_prolog" pkg="json_prolog" type="json_prolog_node" respawn="false" output="screen"/>
-  
-  <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(arg display_config)" respawn="false" output="screen" if="$(arg rviz)"/>
 </launch>

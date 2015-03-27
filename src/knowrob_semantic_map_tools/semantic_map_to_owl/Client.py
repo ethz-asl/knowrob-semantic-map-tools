@@ -22,7 +22,7 @@ class Client(object):
     if "frame_id" in map:
       self.map.header.frame_id = map["frame_id"]
     else:
-      self.map.header.frame_id = "semantic_map"
+      self.map.header.frame_id = "/map"
 
     if "stamp" in map:
       self.map.header.stamp = Time.from_sec(time.mktime(
@@ -35,6 +35,17 @@ class Client(object):
     else:
       self.map.namespace = "http://asl.ethz.ch/example/semantic_map.owl"
 
+    if "prefixes" in map:
+      prefixes = map["prefixes"]
+
+      for pref in prefixes:
+        prefix = SemMapPrefix()
+        
+        prefix.name = pref["name"]
+        prefix.prefix = pref["prefix"]
+        
+        self.map.prefixes.append(prefix)
+        
     if "imports" in map:
       self.map.imports = map["imports"]
 
@@ -100,13 +111,17 @@ class Client(object):
         
         for key in obj:
           if key in self.object_properties:
-            object_property = SemMapObjectProperty()
-
-            object_property.id = self.object_properties[key]
-            object_property.subject = object.id
-            object_property.object = str(obj[key])
+            if not isinstance(obj[key], list):
+              obj[key] = [obj[key]]
             
-            self.map.object_properties.append(object_property)
+            for prop_obj in obj[key]:
+              object_property = SemMapObjectProperty()
+
+              object_property.id = self.object_properties[key]
+              object_property.subject = object.id
+              object_property.object = str(prop_obj)
+              
+              self.map.object_properties.append(object_property)
           if key in self.data_properties:
             data_property = SemMapDataProperty()
 

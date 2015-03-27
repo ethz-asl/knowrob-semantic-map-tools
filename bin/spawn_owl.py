@@ -15,7 +15,6 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description = "Spawn semantic map OWL")
   parser.add_argument("-o", "--output-file", metavar = "FILE",
     dest = "output", help = "OWL output filename or '-' for stdout")
-  print rospy.myargv()
   args = parser.parse_args(rospy.myargv()[1:])
   
   semanticMapToOwlClient = semantic_map_to_owl.Client()  
@@ -31,15 +30,13 @@ if __name__ == '__main__':
   
   prologClient = prolog.Client()
   owlParseStringQuery = knowrob.OwlParseString(owl)
-  owlParseStringQuery.execute(prologClient)
+  owlParseStringQuery.execute(prologClient).finish()
   
-  registerRosPackageQuery = rosprolog.RegisterRosPackage("knowrob_vis")
-  registerRosPackageQuery.execute(prologClient)
-  visualizationServerQuery = knowrob.VisualizationServer()
-  visualizationServerQuery.execute(prologClient)
-  
-  addObjectsQuery = knowrob.OwlIndividualOf("MapObjects",
+  owlIndividualOfQuery = knowrob.OwlIndividualOf(
     "knowrob:'SemanticEnvironmentMap'")
-  addObjectsQuery &= knowrob.AddObjectWithChildren("MapObjects")
-  addObjectsQuery.execute(prologClient)
+  map = owlIndividualOfQuery.execute(prologClient).individual
+  
+  markerPublisher = marker_visualization.Publisher(prologClient, [map])
+  
+  rospy.spin()
   

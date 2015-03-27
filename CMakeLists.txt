@@ -17,9 +17,13 @@ catkin_package(
     json_prolog
     json_prolog_msgs
     knowrob_common
+    knowrob_map_tools
+    knowrob_objects
     knowrob_semantic_map_msgs
     knowrob_semantic_map_to_owl
     knowrob_vis
+    tf_conversions
+    visualization_msgs
 )
 
 install(

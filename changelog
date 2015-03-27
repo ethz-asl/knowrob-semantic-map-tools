@@ -1,3 +1,9 @@
+knowrob-semantic-map-tools (0.1-5) unstable; urgency=low
+
+  * Added support for marker visualization
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 27 Mar 2015 14:32:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-4) unstable; urgency=low
 
   * Added support for revised semantic map message types

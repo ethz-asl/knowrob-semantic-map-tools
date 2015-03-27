@@ -24,46 +24,65 @@ class Client(object):
     if isinstance(query, str):
       query = Query(query = query)
     
-    rospy.wait_for_service(self.prologQueryService)
-    request = rospy.ServiceProxy(self.prologQueryService, PrologQuery)    
-    
-    try:
-      response = request(id = str(query.id), query = str(query))
-    except rospy.ServiceException, exception:
-      raise Exception("PrologQuery service request failed: %s" % exception)
-    
-    if not response.ok:
-      raise Exception("Prolog query failed: %s" % response.message)
+    if query.finished:
+      rospy.wait_for_service(self.prologQueryService)
+      request = rospy.ServiceProxy(self.prologQueryService, PrologQuery)    
+      
+      try:
+        response = request(id = str(query.id), query = str(query))
+        query.client = self
+      except rospy.ServiceException, exception:
+        raise Exception("PrologQuery service request failed: %s" % exception)
+      
+      if not response.ok:
+        raise Exception("Prolog query failed: %s" % response.message)
+    else:
+      raise Exception("Prolog query conflict: "+
+        "Another client may have executed your query")      
 
   def nextSolution(self, query):
-    rospy.wait_for_service(self.prologNnextSolutionService)
-    request = rospy.ServiceProxy(self.prologNnextSolutionService,
-      PrologNextSolution)    
+    if query.client == self:
+      while not query.finished:
+        rospy.wait_for_service(self.prologNnextSolutionService)
+        request = rospy.ServiceProxy(self.prologNnextSolutionService,
+          PrologNextSolution)    
 
-    try:
-      response = request(id = str(query.id))
-    except rospy.ServiceException, exception:
-      raise Exception(
-        "PrologNextSolution service request failed: %s" % exception)
-    
-    if response.status == PrologNextSolutionResponse.OK:
-      yield json.loads(response.solution)
-    elif response.status == PrologNextSolutionResponse.NO_SOLUTION:
-      return
-    elif response.status == PrologNextSolutionResponse.WRONG_ID:
-      raise Exception("Prolog query id is invalid: "+
-        "Another process may have terminated our query")
-    elif response.status == PrologNextSolutionResponse.QUERY_FAILED:
-      raise Exception("Prolog query failed: %s" % response.solution)
+        try:
+          response = request(id = str(query.id))
+        except rospy.ServiceException, exception:
+          raise Exception(
+            "PrologNextSolution service request failed: %s" % exception)
+        
+        if response.status == PrologNextSolutionResponse.OK:
+          yield json.loads(response.solution)
+        elif response.status == PrologNextSolutionResponse.NO_SOLUTION:
+          query.client = None
+          return
+        elif response.status == PrologNextSolutionResponse.WRONG_ID:
+          query.client = None
+          raise Exception("Prolog query id is invalid: "+
+            "Another client may have terminated your query")
+        elif response.status == PrologNextSolutionResponse.QUERY_FAILED:
+          query.client = None
+          raise Exception("Prolog query failed: %s" % response.solution)
+        else:
+          query.client = None
+          raise Exception("Prolog query status unknown: %d", response.status)
     else:
-      raise Exception("Prolog query status unknown: %d", response.status)
+      raise Exception("Prolog query conflict: "+
+        "Another client may have executed your query")      
 
   def finish(self, query):
-    rospy.wait_for_service(self.prologFinishService)
-    request = rospy.ServiceProxy(self.prologFinishService, PrologFinish)    
-    
-    try:
-      response = request(id = str(query.id))
-    except rospy.ServiceException, exception:
-      raise Exception("PrologFinish service request failed: %s" % exception)
+    if query.client == self:
+      rospy.wait_for_service(self.prologFinishService)
+      request = rospy.ServiceProxy(self.prologFinishService, PrologFinish)    
+      
+      try:
+        response = request(id = str(query.id))
+        query.client = None
+      except rospy.ServiceException, exception:
+        raise Exception("PrologFinish service request failed: %s" % exception)
+    else:
+      raise Exception("Prolog query conflict: "+
+        "Another client may have executed your query")      
     
