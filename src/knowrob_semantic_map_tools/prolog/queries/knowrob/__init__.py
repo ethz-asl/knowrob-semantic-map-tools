@@ -1,6 +1,6 @@
 from AddObjectWithChildren import *
+from DataProperty import *
 from GetModelPath import *
-from HingedTo import *
 from MapChildObjects import *
 from MapObjectType import *
 from ObjectDimensions import *

@@ -1,15 +1,19 @@
 :- module(object_properties, [
-      hinged_to/2               % ?Subject, ?Object
+      object_property/3         % ?Subject, +Property, ?Object
    ]).
 
 :- use_module(library('semweb/rdf_db.pl')).
 
-%% hinged_to(?Subject, ?Object)
+:- rdf_meta
+  object_property(r, r, r).
+
+%% object_property(?Subject, +Property, ?Object)
 %
-% Find subject or object relatated through object property knowrob:hingedTo
+% Find subject or object relatated through object property
 % 
 % @param Subject Subject of the object property
+% @param Property object property
 % @param Object Object of the object property
 % 
-hinged_to(Subject, Object) :-
-  rdf_has(Subject, knowrob:hingedTo, Object).
+object_property(Subject, Property, Object) :-
+  rdf_has(Subject, Property, Object).

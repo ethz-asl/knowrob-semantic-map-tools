@@ -1,14 +1,14 @@
 from knowrob_semantic_map_tools.prolog.IRI import *
 from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
-class ObjectProperty(Compound):
-  def __init__(self, property, subject = "Subject", object = "Object"):
-    Compound.__init__(self, "object_property",
-      [str(subject), str(property), str(object)])
+class DataProperty(Compound):
+  def __init__(self, property, subject = "Subject", value = "Value"):
+    Compound.__init__(self, "data_property",
+      [str(subject), str(property), value])
     
     self._subject = subject
     self._property = property
-    self._object = object
+    self._value = value
     
   def getSubject(self):
     solution = self.solution
@@ -24,17 +24,17 @@ class ObjectProperty(Compound):
   
   subjects = property(getSubjects)
 
-  def getObject(self):
+  def getValue(self):
     solution = self.solution
     
     if solution:
-      return IRI(solution[self._object])
+      return solution[self._value]
   
-  object = property(getObject)
+  value = property(getValue)
 
-  def getObjects(self):
+  def getValues(self):
     for solution in self.solutions:
-      yield IRI(solution[self._object])
+      yield solution[self._value]
   
-  objects = property(getObjects)
+  values = property(getValues)
   

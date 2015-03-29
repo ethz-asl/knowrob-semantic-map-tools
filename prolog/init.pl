@@ -8,4 +8,5 @@
 
 :- use_module(library('owl_string_parser')).
 :- use_module(library('object_properties')).
+:- use_module(library('data_properties')).
 :- use_module(library('marker_visualization')).

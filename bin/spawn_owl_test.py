@@ -52,18 +52,21 @@ if __name__ == '__main__':
   print "Pose of map:'Cupboard1':"
   print objectPoseQuery.pose
 
-  hingedToQuery = knowrob.HingedTo(object = "map:'Cupboard1'")
+  hingedToQuery = knowrob.ObjectProperty("knowrob:hingedTo",
+    object = "map:'Cupboard1'")
   hingedToQuery.execute(prologClient)
   print "Subject of object property knowrob:hingedTo for object map:'Cupboard1':"
   print hingedToQuery.subject
-
-  hingedToQuery = knowrob.HingedTo(subject = "map:'Door1'")
+  
+  hingedToQuery = knowrob.ObjectProperty("knowrob:hingedTo",
+    subject = "map:'Door1'")
   hingedToQuery.execute(prologClient)
   print "Object of object property knowrob:hingedTo for subject map:'Door1':"
   print hingedToQuery.object
 
-  hasQuery = rdf.Has("knowrob:purchasePrice", subject = "map:'Cupboard1'")
-  hasQuery.execute(prologClient)
-  print "Object of data property knowrob:purchasePrice for subject map:'Cupboard1':"
-  print hasQuery.solution
+  purchasePriceQuery = knowrob.DataProperty("knowrob:purchasePrice",
+    "map:'Cupboard1'")
+  purchasePriceQuery.execute(prologClient)
+  print "Value of data property knowrob:purchasePrice for subject map:'Cupboard1':"
+  print purchasePriceQuery.value
   
