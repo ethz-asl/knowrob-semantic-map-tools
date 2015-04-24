@@ -16,6 +16,7 @@ catkin_package(
     rosprolog
     json_prolog
     json_prolog_msgs
+    knowrob_actions
     knowrob_common
     knowrob_map_tools
     knowrob_objects

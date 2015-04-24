@@ -4,6 +4,7 @@
    ]).
 
 :- use_module(library('semweb/rdf_db.pl')).
+:- use_module(library('semweb/rdfs.pl')).
 :- use_module(library('semantic_map_utils.pl')).
 :- use_module(library('knowrob_objects.pl')).
 :- use_module(library('knowrob_cad_parser.pl')).
@@ -22,7 +23,8 @@ visualization_find_children([Parent|Rest], Children) :-
       visualization_find_children_1(Parent, Child);
       visualization_find_children(Rest, Child)
     ),
-  ChildrenWithDuplicates),
+    ChildrenWithDuplicates
+  ),
   sort(ChildrenWithDuplicates, Children).
 
 visualization_find_children_1(Parent, Child) :-
@@ -40,23 +42,31 @@ visualization_object_info([Object|Rest], Info) :-
   visualization_object_info_1(Object, Info);
   visualization_object_info(Rest, Info).
 
-visualization_object_info_1(Object, [Identifier, Type, Pose,
+visualization_object_info_1(Object, [Identifier, Type, Label, Pose,
     [Width, Height, Depth], ModelPath]) :-
   Identifier = Object,
+  rdfs_label(Object, Label),
   map_object_type(Object, Type),
   (
-    current_object_pose(Object, Pose), !;
-    Pose = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    current_object_pose(Object, _Pose) ->
+      Pose = _Pose;
+      Pose = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ),
   (
-    map_object_dimensions(Object, Width, Depth, Height), !;
-    (
-      Width = 0,
-      Height = 0,
-      Depth = 0
-    )
+    map_object_dimensions(Object, _Width, _Depth, _Height) ->
+      (
+        Width = _Width,
+        Height = _Height,
+        Depth = _Depth
+      );
+      (
+        Width = 0,
+        Height = 0,
+        Depth = 0
+      )
   ),
   (
-    get_model_path(Object, ModelPath), !;
-    ModelPath = ''
+    get_model_path(Object, _ModelPath) ->
+      ModelPath = _ModelPath;
+      ModelPath = ''
   ).

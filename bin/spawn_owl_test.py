@@ -39,7 +39,7 @@ if __name__ == '__main__':
     print individual
 
   registerPrefixQuery = rdf.RegisterPrefix("map",
-    "http://asl.ethz.ch/example/semantic_map.owl#")
+    semanticMapToOwlClient.map.namespace+"#")
   registerPrefixQuery.execute(prologClient).finish()
 
   objectDimensionsQuery = knowrob.ObjectDimensions("map:'Cupboard1'")
@@ -52,6 +52,11 @@ if __name__ == '__main__':
   print "Pose of map:'Cupboard1':"
   print objectPoseQuery.pose
 
+  handlePathQuery = knowrob.GetHandlePath("map:'Door1'")
+  handlePathQuery.execute(prologClient)
+  print "Handle path of map:'Door1':"
+  print handlePathQuery.path
+
   hingedToQuery = knowrob.ObjectProperty("knowrob:hingedTo",
     object = "map:'Cupboard1'")
   hingedToQuery.execute(prologClient)
@@ -63,6 +68,13 @@ if __name__ == '__main__':
   hingedToQuery.execute(prologClient)
   print "Object of object property knowrob:hingedTo for subject map:'Door1':"
   print hingedToQuery.object
+
+  doorActionQuery = knowrob.ActionProperty("knowrob:objectActedOn",
+    object = "knowrob:'Door'")
+  doorActionQuery.execute(prologClient)
+  print "Actions of action property knowrob:objectActedOn with value knowrob:'Door':"
+  for action in doorActionQuery.actions:
+    print action
 
   purchasePriceQuery = knowrob.DataProperty("knowrob:purchasePrice",
     "map:'Cupboard1'")

@@ -1,5 +1,5 @@
 <launch>
-  <arg name="config_file" default="$(find knowrob_semantic_map_tools)/config/semantic_map.yaml"/>
+  <arg name="config_file" default="$(find knowrob_semantic_map_tools)/config/example_semantic_map.yaml"/>
   
   <node name="spawn_owl_test" pkg="knowrob_semantic_map_tools" type="spawn_owl_test.py" respawn="false" output="screen">
     <rosparam command="load" file="$(arg config_file)"/>

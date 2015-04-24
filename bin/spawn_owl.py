@@ -9,6 +9,9 @@ import roslib; roslib.load_manifest("knowrob_semantic_map_tools")
 from knowrob_semantic_map_tools import *
 from knowrob_semantic_map_tools.prolog.queries import *
 
+def handler(object, action):
+  print "Handler for action %s on object %s" % (str(action), str(object))
+
 if __name__ == '__main__':
   rospy.init_node("spawn_owl")
   
@@ -37,6 +40,7 @@ if __name__ == '__main__':
   map = owlIndividualOfQuery.execute(prologClient).individual
   
   markerPublisher = marker_visualization.Publisher(prologClient, [map])
+  markerServer = marker_interaction.Server(prologClient, [map], handler)
   
   rospy.spin()
   

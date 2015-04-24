@@ -12,17 +12,20 @@ publishers:
     topic: "~markers"
     queue_size: 1
     latch: true
+  interactive_marker:
+    service: "~markers"
+    queue_size: 1
 
 map:
   frame_id: "map"
   stamp: 2015-03-12T15:08:00
   
-  namespace: "http://asl.ethz.ch/example/semantic_map.owl"
+  namespace: "http://asl.ethz.ch/knowrob/example_semantic_map.owl"
   prefixes:
-    - name: "map"
-      prefix: "http://asl.ethz.ch/example/semantic_map.owl#"
+    - name: "marker_interaction"
+      prefix: "http://asl.ethz.ch/knowrob/marker_interaction.owl#"
   imports:
-    - "package://knowrob_common/owl/knowrob.owl"
+    - "package://knowrob_semantic_map_tools/owl/semantic_map.owl"
     
   address:
     room_nr: 224
@@ -36,6 +39,8 @@ map:
       id: "knowrob:hingedTo"
   
   data_properties:
+    handle:
+      id: "marker_interaction:pathToInteractiveMarkerHandle"
     purchase_price:
       id: "knowrob:purchasePrice"
   
@@ -73,6 +78,7 @@ map:
         z: 0
       part_of: "Cupboard1"
       hinged_to: "Cupboard1"
+      handle: "package://knowrob_semantic_map_tools/handles/door.dae"
     - id: "HingedJoint1"
       type: "HingedJoint"
       size:
@@ -106,8 +112,9 @@ map:
         z: 0
       part_of: "Door1"
 
-visualization:
+markers:
   labels:
+    enabled: false
     scale: 0.2
     color:
       r: 1.0
@@ -115,15 +122,26 @@ visualization:
       b: 1.0
       a: 1.0
   bounding_boxes:
+    enabled: true
     color:
       r: 1.0
       g: 1.0
       b: 1.0
       a: 0.2
-  meshes:
+  models:
+    enabled: true
     embedded_materials: true
     color:
       r: 0.6
       g: 0.6
       b: 0.6
+      a: 1.0
+  handles:
+    enabled: true
+    scale: 0.3
+    embedded_materials: true
+    color:
+      r: 1.0
+      g: 0.0
+      b: 0.0
       a: 1.0

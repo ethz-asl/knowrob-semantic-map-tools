@@ -1,5 +1,5 @@
 <launch>
-  <arg name="config_file" default="$(find knowrob_semantic_map_tools)/config/semantic_map.yaml"/>
+  <arg name="config_file" default="$(find knowrob_semantic_map_tools)/config/example_semantic_map.yaml"/>
   <arg name="rviz" default="false"/>
   <arg name="display_config" default="$(find knowrob_semantic_map_tools)/rviz/spawn_owl.rviz"/>
   

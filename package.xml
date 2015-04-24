@@ -19,6 +19,7 @@
   <run_depend>rosprolog</run_depend>
   <run_depend>json_prolog</run_depend>
   <run_depend>json_prolog_msgs</run_depend>
+  <run_depend>knowrob_actions</run_depend>
   <run_depend>knowrob_common</run_depend>
   <run_depend>knowrob_map_tools</run_depend>
   <run_depend>knowrob_objects</run_depend>

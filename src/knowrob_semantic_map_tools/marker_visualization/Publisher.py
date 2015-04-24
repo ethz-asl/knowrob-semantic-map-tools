@@ -30,16 +30,24 @@ class Publisher(object):
       self.stamp = Time.from_sec(time.mktime(time.strptime(
         self.stamp.value, "%Y%m%dT%H:%M:%S")))
     
+    self.labelsEnabled = rospy.get_param(
+      "~markers/labels/enabled", False)
     self.labelScale = rospy.get_param(
-      "~visualization/labels/scale", 1.0)
+      "~markers/labels/scale", 1.0)
     self.labelColor = self.getColorParam(
-      "~visualization/labels/color", 1.0, 1.0, 1.0, 1.0)
+      "~markers/labels/color", 1.0, 1.0, 1.0, 1.0)
+    
+    self.boundingBoxesEnabled = rospy.get_param(
+      "~markers/bounding_boxes/enabled", False)
     self.boundingBoxColor = self.getColorParam(
-      "~visualization/bounding_boxes/color", 1.0, 1.0, 1.0, 0.2)
-    self.meshEmbeddedMaterials = rospy.get_param(
-      "~visualization/meshes/embedded_materials", True)
-    self.meshColor = self.getColorParam(
-      "~visualization/meshes/color", 0.6, 0.6, 0.6, 1.0)
+      "~markers/bounding_boxes/color", 1.0, 1.0, 1.0, 0.2)
+    
+    self.modelsEnabled = rospy.get_param(
+      "~markers/models/enabled", True)
+    self.modelEmbeddedMaterials = rospy.get_param(
+      "~markers/models/embedded_materials", True)
+    self.modelColor = self.getColorParam(
+      "~markers/models/color", 0.6, 0.6, 0.6, 1.0)
     
     self.prologClient = prologClient  
     self.message = self.createMarkerArray(identifiers)
@@ -84,20 +92,23 @@ class Publisher(object):
     visualizatonObjectInfoQuery.execute(self.prologClient)
     
     for info in visualizatonObjectInfoQuery.infos:
-      label = info["identifier"].fragment
-      type = info["type"].fragment
+      identifier = info["identifier"]
+      label = info["label"]
+      type = info["type"]
       frame = fromTf(info["tf"])
       pose = toMsg(frame)
       size = info["dimensions"]
-      mesh = info["model"]
+      model = info["model"]
       
-      if mesh:
+      if self.modelsEnabled and model:
         markers.append(self.createMeshMarker(pose,
-          self.camelCase(type)+"_meshes", mesh, len(markers)))
-      if size["x"] > 0.0 and size["y"] > 0.0 and size["z"] > 0.0:
+          self.camelCase(type.fragment)+"_models", model, len(markers)))
+      if self.boundingBoxesEnabled and size["x"] > 0.0 and \
+          size["y"] > 0.0 and size["z"] > 0.0:
         markers.append(self.createBoundingBoxMarker(pose, size,
           len(markers)))
-      markers.append(self.createLabelMarker(pose, label, len(markers)))
+      if self.labelsEnabled:
+        markers.append(self.createLabelMarker(pose, label, len(markers)))
         
   def createMeshMarker(self, pose, namespace, resource, id):
     message = self.createMarker(pose, id)
@@ -109,13 +120,13 @@ class Publisher(object):
     message.scale.y = 1.0
     message.scale.z = 1.0
     
-    message.color.r = self.meshColor["r"]
-    message.color.g = self.meshColor["g"]
-    message.color.b = self.meshColor["b"]
-    message.color.a = self.meshColor["a"]
+    message.color.r = self.modelColor["r"]
+    message.color.g = self.modelColor["g"]
+    message.color.b = self.modelColor["b"]
+    message.color.a = self.modelColor["a"]
     
     message.mesh_resource = resource
-    message.mesh_use_embedded_materials = self.meshEmbeddedMaterials
+    message.mesh_use_embedded_materials = self.modelEmbeddedMaterials
     
     return message
   

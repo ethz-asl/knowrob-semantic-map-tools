@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /MarkerArray1
+        - /InteractiveMarkers1
       Splitter Ratio: 0.5
     Tree Height: 562
   - Class: rviz/Selection
@@ -54,8 +55,18 @@ Visualization Manager:
       Marker Topic: /spawn_owl/markers
       Name: MarkerArray
       Namespaces:
-        SemanticMap: true
+        bounding_boxes: true
+        labels: false
       Queue Size: 100
+      Value: true
+    - Class: rviz/InteractiveMarkers
+      Enable Transparency: true
+      Enabled: true
+      Name: InteractiveMarkers
+      Show Axes: false
+      Show Descriptions: true
+      Show Visual Aids: false
+      Update Topic: /spawn_owl/markers/update
       Value: true
   Enabled: true
   Global Options:

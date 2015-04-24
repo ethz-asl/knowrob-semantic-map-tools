@@ -33,7 +33,12 @@ class Client(object):
     if "namespace" in map:
       self.map.namespace = map["namespace"]
     else:
-      self.map.namespace = "http://asl.ethz.ch/example/semantic_map.owl"
+      self.map.namespace = "http://asl.ethz.ch/knowrob/example_semantic_map.owl"
+
+    prefix = SemMapPrefix()
+    prefix.name = "map"
+    prefix.prefix = self.map.namespace+"#"
+    self.map.prefixes.append(prefix)
 
     if "prefixes" in map:
       prefixes = map["prefixes"]
