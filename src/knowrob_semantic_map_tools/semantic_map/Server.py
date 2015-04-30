@@ -10,15 +10,15 @@ from knowrob_semantic_map_msgs.srv import *
 
 import Exception
 
-class Client(object):
+class Server(object):
   def __init__(self):
-    self.generateSemanticMapOWLService = rospy.get_param(
-      "~clients/generate_semantic_map_owl/service",
-      "/knowrob_semantic_map_to_owl/generate_owl_map")
+    self.getSemanticMapService = rospy.get_param(
+      "~servers/get_semantic_map/service", "~get_map")
     
     map = rospy.get_param("~map")
     
     self.map = SemMap()
+    
     if "frame_id" in map:
       self.map.header.frame_id = map["frame_id"]
     else:
@@ -35,6 +35,11 @@ class Client(object):
     else:
       self.map.namespace = "http://asl.ethz.ch/knowrob/example_semantic_map.owl"
 
+    if "id" in map:
+      self.map.id = map["id"]
+    else:
+      self.map.id = "ExampleSemanticMap"
+      
     prefix = SemMapPrefix()
     prefix.name = "map"
     prefix.prefix = self.map.namespace+"#"
@@ -89,6 +94,15 @@ class Client(object):
       
       for obj in objects:
         object = SemMapObject()
+        
+        if "frame_id" in obj:
+          object.header.frame_id = obj["frame_id"]
+
+        if "stamp" in obj:
+          object.header.stamp = Time.from_sec(time.mktime(
+            time.strptime(obj["stamp"].value, "%Y%m%dT%H:%M:%S")))
+        else:
+          object.header.stamp = self.map.header.stamp
         
         object.id = str(obj["id"])
         object.type = obj["type"]
@@ -145,19 +159,10 @@ class Client(object):
             data_property.value = str(obj[key])
             
             self.map.data_properties.append(data_property)
-  
-  def getOwl(self):
-    rospy.wait_for_service(self.generateSemanticMapOWLService)
     
-    try:
-      request = rospy.ServiceProxy(self.generateSemanticMapOWLService,
-        GenerateSemanticMapOWL)
-      response = request(map = self.map)
-    except rospy.ServiceException, exception:
-      raise Exception(
-        "GenerateSemanticMapOWL service request failed: %s" % exception)
-      
-    return response.owlmap
+    self.getSemanticMapServer = rospy.Service(self.getSemanticMapService,
+      GetSemanticMap, self.getSemanticMap)
   
-  owl = property(getOwl)
+  def getSemanticMap(self, request):
+    return GetSemanticMapResponse(self.map)
   

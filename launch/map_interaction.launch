@@ -1,0 +1,25 @@
+<launch>
+  <group ns="semantic_map">
+    <arg name="config_file"
+         default="$(find knowrob_semantic_map_tools)/config/map_interaction.yaml"/>
+    <arg name="output" default="log"/>
+    
+    <include file="$(find knowrob_semantic_map_tools)/launch/includes/map_interaction.launch.xml">
+      <arg name="config_file" value="$(arg config_file)"/>
+      <arg name="output" value="$(arg output)"/>
+    </include>
+    
+    <arg name="rviz" default="false"/>
+    <arg name="rviz_display_config"
+         default="$(find knowrob_semantic_map_tools)/rviz/example.rviz"/>
+    <arg name="rviz_output" default="$(arg output)"/>
+    <arg name="rviz_required" default="true"/>
+         
+    <include file="$(find knowrob_semantic_map_tools)/launch/includes/rviz.launch.xml"
+             if="$(arg rviz)">
+      <arg name="display_config" value="$(arg rviz_display_config)"/>
+      <arg name="output" value="$(arg rviz_output)"/>
+      <arg name="required" value="$(arg rviz_required)"/>
+    </include>
+  </group>
+</launch>

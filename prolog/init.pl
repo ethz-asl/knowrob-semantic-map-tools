@@ -7,6 +7,7 @@
 :- register_ros_package(knowrob_actions).
 :- register_ros_package(knowrob_semantic_map_tools).
 
+:- use_module(library('semantic_map')).
 :- use_module(library('owl_string_parser')).
 :- use_module(library('object_properties')).
 :- use_module(library('data_properties')).

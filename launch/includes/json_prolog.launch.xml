@@ -1,0 +1,8 @@
+<launch>
+  <arg name="output" default="log"/>
+  <arg name="initial_package" default="knowrob_semantic_map_tools"/>
+  
+  <param name="initial_package" type="string" value="$(arg initial_package)"/>
+  <node name="json_prolog" pkg="json_prolog" type="json_prolog_node"
+        respawn="false" output="$(arg output)"/>
+</launch>

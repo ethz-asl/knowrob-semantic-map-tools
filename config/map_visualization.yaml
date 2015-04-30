@@ -1,0 +1,41 @@
+clients:
+  prolog_query:
+    service: "json_prolog/simple_query"
+  prolog_next_solution:
+    service: "json_prolog/next_solution"
+  prolog_finish:
+    service: "json_prolog/finish"
+
+publishers:
+  marker_array:
+    topic: "~markers"
+    queue_size: 1
+    latch: true
+    rate: 1.0
+
+markers:
+  labels:
+    enabled: true
+    scale: 0.2
+    color:
+      r: 1.0
+      g: 1.0
+      b: 1.0
+      a: 1.0
+  axes:
+    enabled: true
+  bounding_boxes:
+    enabled: true
+    color:
+      r: 1.0
+      g: 1.0
+      b: 1.0
+      a: 0.2
+  models:
+    enabled: true
+    embedded_materials: true
+    color:
+      r: 0.6
+      g: 0.6
+      b: 0.6
+      a: 1.0

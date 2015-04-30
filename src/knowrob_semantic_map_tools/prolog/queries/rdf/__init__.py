@@ -1,3 +1,3 @@
-from Has import *
-from Reachable import *
-from RegisterPrefix import *
+from Has import Has
+from Reachable import Reachable
+from RegisterPrefix import RegisterPrefix

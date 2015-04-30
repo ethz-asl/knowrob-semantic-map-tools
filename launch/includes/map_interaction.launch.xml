@@ -1,0 +1,10 @@
+<launch>
+  <arg name="config_file"
+       default="$(find knowrob_semantic_map_tools)/config/map_interaction.yaml"/>
+  <arg name="output" default="log"/>
+  
+  <node name="map_interaction" pkg="knowrob_semantic_map_tools"
+        type="map_interaction.py" respawn="false" output="$(arg output)">
+    <rosparam command="load" file="$(arg config_file)"/>
+  </node>
+</launch>

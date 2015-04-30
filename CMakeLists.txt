@@ -10,7 +10,7 @@ find_package(
 catkin_python_setup()
 
 catkin_package(
-  DEPENDS
+  CATKIN_DEPENDS
     rospy
     geometry_msgs
     rosprolog
@@ -28,7 +28,9 @@ catkin_package(
 )
 
 install(
-  PROGRAMS bin/spawn_owl.py
+  PROGRAMS
+    bin/semantic_map.py
+    bin/semantic_map_test.py
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/bin
 )
 

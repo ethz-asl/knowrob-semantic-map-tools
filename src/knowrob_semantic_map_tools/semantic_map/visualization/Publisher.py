@@ -37,6 +37,9 @@ class Publisher(object):
     self.labelColor = self.getColorParam(
       "~markers/labels/color", 1.0, 1.0, 1.0, 1.0)
     
+    self.axesEnabled = rospy.get_param(
+      "~markers/axes/enabled", False)
+    
     self.boundingBoxesEnabled = rospy.get_param(
       "~markers/bounding_boxes/enabled", False)
     self.boundingBoxColor = self.getColorParam(
@@ -102,38 +105,72 @@ class Publisher(object):
       
       if self.modelsEnabled and model:
         markers.append(self.createMeshMarker(pose,
-          self.camelCase(type.fragment)+"_models", model, len(markers)))
+          "models", model, len(markers)))
+      if self.axesEnabled:
+        markers.extend(self.createAxesMarkers(pose,
+          "axes", len(markers)))
       if self.boundingBoxesEnabled and size["x"] > 0.0 and \
           size["y"] > 0.0 and size["z"] > 0.0:
-        markers.append(self.createBoundingBoxMarker(pose, size,
-          len(markers)))
+        markers.append(self.createBoundingBoxMarker(pose,
+          "bounding_boxes", size, len(markers)))
       if self.labelsEnabled:
-        markers.append(self.createLabelMarker(pose, label, len(markers)))
+        markers.append(self.createLabelMarker(pose,
+          "labels", label, len(markers)))
         
-  def createMeshMarker(self, pose, namespace, resource, id):
-    message = self.createMarker(pose, id)
+  def createAxesMarkers(self, pose, namespace, id):
+    dims = ["x", "y", "z"]
+    cols = ["r", "g", "b"]
     
-    message.ns = namespace
+    messages = []
+    
+    for i in [0, 1, 2]:
+      message = self.createMarker(pose, namespace, id+i)
+    
+      message.type = Marker.ARROW
+      message.action = Marker.ADD
+      
+      startPoint = Point()
+      message.points.append(startPoint)
+      
+      endPoint = Point()
+      setattr(endPoint, dims[i], 1.0)
+      message.points.append(endPoint)
+      
+      setattr(message.color, cols[i], 1.0)
+      message.color.a = 1.0
+
+      message.scale.x = 0.05
+      message.scale.y = 0.1
+      message.scale.z = 0.0
+      
+      messages.append(message)
+      
+    return messages
+  
+  def createMeshMarker(self, pose, namespace, resource, id):
+    message = self.createMarker(pose, namespace, id)
+    
     message.type = Marker.MESH_RESOURCE
+    message.action = Marker.ADD
     
     message.scale.x = 1.0
     message.scale.y = 1.0
     message.scale.z = 1.0
     
-    message.color.r = self.modelColor["r"]
-    message.color.g = self.modelColor["g"]
-    message.color.b = self.modelColor["b"]
-    message.color.a = self.modelColor["a"]
+    if not self.modelEmbeddedMaterials:
+      message.color.r = self.modelColor["r"]
+      message.color.g = self.modelColor["g"]
+      message.color.b = self.modelColor["b"]
+      message.color.a = self.modelColor["a"]
     
     message.mesh_resource = resource
     message.mesh_use_embedded_materials = self.modelEmbeddedMaterials
     
     return message
   
-  def createBoundingBoxMarker(self, pose, size, id):
-    message = self.createMarker(pose, id)
+  def createBoundingBoxMarker(self, pose, namespace, size, id):
+    message = self.createMarker(pose, namespace, id)
     
-    message.ns = "bounding_boxes"
     message.type = Marker.CUBE
     
     message.scale.x = size["x"]
@@ -147,10 +184,9 @@ class Publisher(object):
     
     return message
   
-  def createLabelMarker(self, pose, text, id):
-    message = self.createMarker(pose, id)
+  def createLabelMarker(self, pose, namespace, text, id):
+    message = self.createMarker(pose, namespace, id)
     
-    message.ns = "labels"
     message.type = Marker.TEXT_VIEW_FACING    
     
     message.scale.x = self.labelScale
@@ -166,7 +202,7 @@ class Publisher(object):
     
     return message
 
-  def createMarker(self, pose, id):
+  def createMarker(self, pose, namespace, id):
     message = Marker()
     
     message.header.frame_id = self.frameId    
@@ -174,8 +210,10 @@ class Publisher(object):
       message.header.stamp = self.stamp
     else:
       message.header.stamp = Time.now()
-      
+    
+    message.ns = namespace
     message.id = id
+    
     message.pose = pose
     
     return message

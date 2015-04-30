@@ -10,37 +10,20 @@ from knowrob_semantic_map_tools import *
 from knowrob_semantic_map_tools.prolog.queries import *
 
 if __name__ == '__main__':
-  rospy.init_node("spawn_owl")
-  
-  parser = argparse.ArgumentParser(description = "Spawn semantic map OWL")
-  parser.add_argument("-o", "--output-file", metavar = "FILE",
-    dest = "output", help = "OWL output filename or '-' for stdout")
+  rospy.init_node("prolog_test")
+    
+  parser = argparse.ArgumentParser(
+    description = "Semantic map prolog query testing")
   args = parser.parse_args(rospy.myargv()[1:])
   
-  semanticMapToOwlClient = semantic_map_to_owl.Client()  
-  owl = semanticMapToOwlClient.owl
-  
-  if args.output:
-    if args.output == "-":
-      sys.stdout.write(owl)
-    else:
-      outputFile = open(args.output, "w");
-      outputFile.write(owl)
-      outputFile.close()
-  
-  prologClient = prolog.Client()
-  owlParseStringQuery = knowrob.OwlParseString(owl)
-  owlParseStringQuery.execute(prologClient).finish()
-  
+  prologClient = semantic_map.prolog.Client()
+  prologClient.waitForOwlParsed()
+
   owlIndividualOfQuery = knowrob.OwlIndividualOf("knowrob:'Cupboard'")
   owlIndividualOfQuery.execute(prologClient)
   print "Individuals of type knowrob:'Cupboard':"
   for individual in owlIndividualOfQuery.individuals:
     print individual
-
-  registerPrefixQuery = rdf.RegisterPrefix("map",
-    semanticMapToOwlClient.map.namespace+"#")
-  registerPrefixQuery.execute(prologClient).finish()
 
   objectDimensionsQuery = knowrob.ObjectDimensions("map:'Cupboard1'")
   objectDimensionsQuery.execute(prologClient)

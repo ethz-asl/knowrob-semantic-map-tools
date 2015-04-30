@@ -52,11 +52,10 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /spawn_owl/markers
+      Marker Topic: /semantic_map/map_visualization/markers
       Name: MarkerArray
       Namespaces:
-        bounding_boxes: true
-        labels: false
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/InteractiveMarkers
@@ -66,7 +65,7 @@ Visualization Manager:
       Show Axes: false
       Show Descriptions: true
       Show Visual Aids: false
-      Update Topic: /spawn_owl/markers/update
+      Update Topic: /semantic_map/map_interaction/markers/update
       Value: true
   Enabled: true
   Global Options:
@@ -92,7 +91,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 9.71407
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1

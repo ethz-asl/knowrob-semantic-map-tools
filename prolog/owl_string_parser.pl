@@ -1,4 +1,5 @@
 :- module(owl_string_parser, [
+      owl_parsed/0,
       owl_parse_string/1,              % +String
       owl_parse_string_from_file/1     % +File
    ]).
@@ -8,6 +9,8 @@
 :- use_module(library('semweb/rdf_edit.pl')).
 :- use_module(library('semweb/rdfs.pl')).
 :- use_module(library('memfile.pl')).
+
+:- dynamic(owl_parsed/0).
 
 %% owl_parse_string(+String)
 %
@@ -35,7 +38,8 @@ owl_parse_string(String) :-
     rdf(_, 'http://www.w3.org/2002/07/owl#imports', Import_URL),
     owl_parse_imports(Import_URL, [Import_URL|Imported]);
     true
-  ).
+  ),
+  assert(owl_parsed).
 
 owl_parse_imports(URL, Imported) :-
   (
@@ -66,7 +70,7 @@ owl_parse_imports(URL, Imported) :-
   ),
   (
     rdf(_,'http://www.w3.org/2002/07/owl#imports',Import_URL),
-    not( owl_file_loaded(Import_URL)),!,
+    not(owl_file_loaded(Import_URL)),!,
     owl_parse_imports(Import_URL,[Import_URL|Imported]); 
     true
   ).

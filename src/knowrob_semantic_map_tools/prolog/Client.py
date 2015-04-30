@@ -38,7 +38,7 @@ class Client(object):
         raise Exception("Prolog query failed: %s" % response.message)
     else:
       raise Exception("Prolog query conflict: "+
-        "Another client may have executed your query")      
+        "Another client may have executed your query")
 
   def nextSolution(self, query):
     if query.client == self:

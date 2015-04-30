@@ -1,3 +1,12 @@
+knowrob-semantic-map-tools (0.1-8) unstable; urgency=low
+
+  * Added interactive markers
+  * Added more prolog queries
+  * Revised python source structure
+  * Revised launch files, added launch includes
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 30 Apr 2015 09:29:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-7) unstable; urgency=low
 
   * Interactive marker server and related ontology extensions

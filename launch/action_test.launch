@@ -1,0 +1,12 @@
+<launch>
+  <group ns="semantic_map">
+    <arg name="config_file"
+         default="$(find knowrob_semantic_map_tools)/config/action_test.yaml"/>
+    <arg name="output" default="screen"/>
+    
+    <node name="action_test" pkg="knowrob_semantic_map_tools"
+          type="action_test.py" respawn="false" output="$(arg output)">
+      <rosparam command="load" file="$(arg config_file)"/>
+    </node>
+  </group>
+</launch>

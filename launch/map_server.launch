@@ -1,0 +1,15 @@
+<launch>
+  <group ns="semantic_map">
+    <arg name="config_file"
+         default="$(find knowrob_semantic_map_tools)/config/map_server.yaml"/>
+    <arg name="map" default="example"/>
+    <arg name="output" default="log"/>
+    
+    <include file="$(find knowrob_semantic_map_tools)/launch/includes/map_server.launch.xml">
+      <arg name="config_file" value="$(arg config_file)"/>
+      <arg name="map_file"
+           value="$(find knowrob_semantic_map_tools)/maps/$(arg map).yaml"/>
+      <arg name="output" value="$(arg output)"/>
+    </include>
+  </group>
+</launch>

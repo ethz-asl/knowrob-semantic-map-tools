@@ -5,7 +5,6 @@ class ObjectDimensions(Compound):
       depth = "Depth"):
     Compound.__init__(self, "object_dimensions",
       [str(identifier), depth, width, height])
-    print str(self)
     
     self._width = width
     self._height = height

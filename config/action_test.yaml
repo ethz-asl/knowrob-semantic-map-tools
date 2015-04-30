@@ -1,0 +1,12 @@
+clients:
+  prolog_query:
+    service: "json_prolog/simple_query"
+  prolog_next_solution:
+    service: "json_prolog/next_solution"
+  prolog_finish:
+    service: "json_prolog/finish"
+    
+subscribers:
+  semantic_map_action:
+    topic: "map_interaction/actions"
+    queue_size: 1

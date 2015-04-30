@@ -1,3 +1,5 @@
+import re
+
 import rospy
 from rospy.rostime import *
 
@@ -27,13 +29,13 @@ class Server(object):
         self.stamp.value, "%Y%m%dT%H:%M:%S")))
     
     self.handlesEnabled = rospy.get_param(
-      "~markers/handles/enabled", True)
+      "~interactive_markers/handles/enabled", True)
     self.handleScale = rospy.get_param(
-      "~markers/handles/scale", 1.0)
+      "~interactive_markers/handles/scale", 1.0)
     self.handleEmbeddedMaterials = rospy.get_param(
-      "~markers/handles/embedded_materials", True)
+      "~interactive_markers/handles/embedded_materials", True)
     self.handleColor = self.getColorParam(
-      "~markers/handles/color", 0.6, 0.6, 0.6, 1.0)
+      "~interactive_markers/handles/color", 0.6, 0.6, 0.6, 1.0)
     
     self.prologClient = prologClient
     self.actionHandler = actionHandler
@@ -103,14 +105,18 @@ class Server(object):
     else:
       message.header.stamp = Time.now()
     
-    message.pose = pose
+    message.pose.position = pose.position
+    message.pose.orientation.x = 0.0
+    message.pose.orientation.y = 0.0
+    message.pose.orientation.z = 0.0
+    message.pose.orientation.w = 1.0
+    
     message.name = name
     message.description = description
     message.scale = 1.0
 
     marker["controls"] = {}
-    self.createControls(marker["controls"], name, handle, description,
-      namespace)
+    self.createControls(marker["controls"], name, pose, handle, namespace)
     for control in marker["controls"]:
       message.controls.append(marker["controls"][control]["message"])
     
@@ -159,34 +165,50 @@ class Server(object):
         "message": message
       }
       
-  def createControls(self, controls, name, handle, description, namespace):
+  def createControls(self, controls, name, pose, handle, namespace):
     message = InteractiveMarkerControl()
     
     message.name = name
+    
+    message.orientation.x = 0.0
+    message.orientation.y = 0.0
+    message.orientation.z = 0.0
+    message.orientation.w = 1.0
+    
     message.orientation_mode = InteractiveMarkerControl.VIEW_FACING
     message.interaction_mode = InteractiveMarkerControl.MENU
     
-    message.markers.append(self.createMeshMarker(namespace,
+    message.markers.append(self.createMeshMarker(namespace, pose,
       handle, len(message.markers)))
+    
+    message.independent_marker_orientation = False
   
     controls[name] = {
       "message": message
     }
   
-  def createMeshMarker(self, namespace, resource, id):
+  def createMeshMarker(self, namespace, pose, resource, id):
     message = self.createMarker(id)
     
     message.ns = namespace
     message.type = Marker.MESH_RESOURCE
+    message.action = Marker.ADD
+    
+    message.pose.position = pose.position
+    message.pose.orientation.x = 0.0
+    message.pose.orientation.y = 0.0
+    message.pose.orientation.z = 1.0
+    message.pose.orientation.w = 0.0
     
     message.scale.x = self.handleScale
     message.scale.y = self.handleScale
     message.scale.z = self.handleScale
     
-    message.color.r = self.handleColor["r"]
-    message.color.g = self.handleColor["g"]
-    message.color.b = self.handleColor["b"]
-    message.color.a = self.handleColor["a"]
+    if not self.handleEmbeddedMaterials:
+      message.color.r = self.handleColor["r"]
+      message.color.g = self.handleColor["g"]
+      message.color.b = self.handleColor["b"]
+      message.color.a = self.handleColor["a"]
     
     message.mesh_resource = resource
     message.mesh_use_embedded_materials = self.handleEmbeddedMaterials
@@ -196,17 +218,13 @@ class Server(object):
   def createMarker(self, id):
     message = Marker()
     
-    message.header.frame_id = self.frameId    
+    message.header.frame_id = self.frameId
     if self.stamp:
       message.header.stamp = self.stamp
     else:
       message.header.stamp = Time.now()
       
     message.id = id
-    message.pose.orientation.x = 0.0
-    message.pose.orientation.y = 0.0
-    message.pose.orientation.z = -0.70711
-    message.pose.orientation.w = 0.70711
     
     return message
 
@@ -217,6 +235,8 @@ class Server(object):
   def processFeedback(self, feedback):
     if self.actionHandler:
       marker = self.markers[feedback.marker_name]
-      self.actionHandler(marker["identifier"],
-        marker["menu_entries"][feedback.menu_entry_id]["identifier"])
+      
+      self.actionHandler(feedback,
+        marker["menu_entries"][feedback.menu_entry_id]["identifier"],
+        marker["identifier"])
   

@@ -1,0 +1,7 @@
+<launch>
+  <arg name="output" default="log"/>
+  
+  <node name="map_to_owl" pkg="knowrob_semantic_map_to_owl"
+        type="semantic_map_to_owl_node" respawn="false"
+        output="$(arg output)"/>
+</launch>

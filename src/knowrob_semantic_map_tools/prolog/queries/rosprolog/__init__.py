@@ -1,1 +1,1 @@
-from RegisterRosPackage import *
+from RegisterRosPackage import RegisterRosPackage

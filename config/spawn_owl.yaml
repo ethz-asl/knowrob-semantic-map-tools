@@ -1,0 +1,11 @@
+clients:
+  get_semantic_map:
+    service: "map_server/get_map"
+  generate_semantic_map_owl:
+    service: "map_to_owl/generate_owl_map"
+  prolog_query:
+    service: "json_prolog/simple_query"
+  prolog_next_solution:
+    service: "json_prolog/next_solution"
+  prolog_finish:
+    service: "json_prolog/finish"

@@ -35,7 +35,7 @@ visualization_find_children_1(Parent, Child) :-
 %
 % Construct a list of properties required to visualize map objects.
 % 
-% @param Objects List of object for which to retrieve information
+% @param Objects List of objects for which to retrieve information
 % @param Info List of properties required to visualize the objects
 % 
 visualization_object_info([Object|Rest], Info) :-

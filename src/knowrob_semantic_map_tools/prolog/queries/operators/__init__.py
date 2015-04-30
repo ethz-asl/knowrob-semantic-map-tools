@@ -1,2 +1,2 @@
-from And import *
-from Or import *
+from And import And
+from Or import Or

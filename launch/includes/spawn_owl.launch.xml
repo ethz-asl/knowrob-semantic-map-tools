@@ -1,0 +1,12 @@
+<launch>
+  <arg name="config_file"
+       default="$(find knowrob_semantic_map_tools)/config/spawn_owl.yaml"/>
+  <arg name="output_file" default="-"/>
+  <arg name="output" default="log"/>
+  
+  <node name="spawn_owl" pkg="knowrob_semantic_map_tools"
+        type="spawn_owl.py" args="--output-file $(arg output_file)"
+        respawn="false" output="$(arg output)">
+    <rosparam command="load" file="$(arg config_file)"/>
+  </node>
+</launch>

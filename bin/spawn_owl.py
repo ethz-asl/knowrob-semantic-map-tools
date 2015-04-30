@@ -9,19 +9,20 @@ import roslib; roslib.load_manifest("knowrob_semantic_map_tools")
 from knowrob_semantic_map_tools import *
 from knowrob_semantic_map_tools.prolog.queries import *
 
-def handler(object, action):
-  print "Handler for action %s on object %s" % (str(action), str(object))
-
 if __name__ == '__main__':
   rospy.init_node("spawn_owl")
   
-  parser = argparse.ArgumentParser(description = "Spawn semantic map OWL")
+  parser = argparse.ArgumentParser(
+    description = "Spawn semantic map ontology in OWL format")
   parser.add_argument("-o", "--output-file", metavar = "FILE",
     dest = "output", help = "OWL output filename or '-' for stdout")
   args = parser.parse_args(rospy.myargv()[1:])
+
+  semanticMapClient = semantic_map.Client()
+  map = semanticMapClient.map
   
-  semanticMapToOwlClient = semantic_map_to_owl.Client()  
-  owl = semanticMapToOwlClient.owl
+  semanticMapGenerationClient = semantic_map.generation.Client(map)
+  owl = semanticMapGenerationClient.owl
   
   if args.output:
     if args.output == "-":
@@ -32,15 +33,12 @@ if __name__ == '__main__':
       outputFile.close()
   
   prologClient = prolog.Client()
+  
   owlParseStringQuery = knowrob.OwlParseString(owl)
   owlParseStringQuery.execute(prologClient).finish()
-  
-  owlIndividualOfQuery = knowrob.OwlIndividualOf(
-    "knowrob:'SemanticEnvironmentMap'")
-  map = owlIndividualOfQuery.execute(prologClient).individual
-  
-  markerPublisher = marker_visualization.Publisher(prologClient, [map])
-  markerServer = marker_interaction.Server(prologClient, [map], handler)
-  
+
+  registerPrefixQuery = rdf.RegisterPrefix("map", map.namespace+"#")
+  registerPrefixQuery.execute(prologClient).finish()
+
   rospy.spin()
   

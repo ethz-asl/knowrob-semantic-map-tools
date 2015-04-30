@@ -111,7 +111,7 @@ interaction_find_children_1(Parent, Child) :-
 %
 % Construct a list of properties required to interact with map objects.
 % 
-% @param Objects List of object for which to retrieve information
+% @param Objects List of objects for which to retrieve information
 % @param Info List of properties required to interact with the objects
 % 
 interaction_object_info([Object|Rest], Info) :-

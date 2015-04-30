@@ -1,0 +1,10 @@
+<launch>
+  <arg name="display_config"
+       default="$(find knowrob_semantic_map_tools)/rviz/example.rviz"/>
+  <arg name="output" default="log"/>
+  <arg name="required" default="false"/>
+  
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="--display-config $(arg display_config)" respawn="false"
+        output="$(arg output)" required="$(arg required)"/>
+</launch>
