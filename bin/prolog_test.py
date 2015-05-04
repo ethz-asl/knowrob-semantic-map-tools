@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import time
 import argparse
 
 import rospy
@@ -64,4 +65,14 @@ if __name__ == '__main__':
   purchasePriceQuery.execute(prologClient)
   print "Value of data property knowrob:purchasePrice for subject map:'Cupboard1':"
   print purchasePriceQuery.value
+
+  frameQuery = knowrob.MapObjectFrame("map:'Cupboard1'")
+  frameQuery.execute(prologClient)
+  print "Tf frame of object map:'Cupboard1':"
+  print frameQuery.frame
+
+  stampQuery = knowrob.MapObjectStamp("map:'Cupboard1'")
+  stampQuery.execute(prologClient)
+  print "Timestamp of object map:'Cupboard1':"
+  print time.ctime(stampQuery.stamp.secs)
   

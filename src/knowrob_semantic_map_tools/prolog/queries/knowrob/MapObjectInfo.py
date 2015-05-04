@@ -1,5 +1,8 @@
 import numpy
 
+import rospy
+from rospy.rostime import *
+
 from tf_conversions import *
 
 from knowrob_semantic_map_tools.prolog.IRI import *
@@ -7,16 +10,18 @@ from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
 class MapObjectInfo(Compound):
   def __init__(self, identifiers, identifier = "Identifier", type = "Type",
-      label = "Label", pose = "Pose", width = "Width", height = "Height",
-      depth = "Depth", parent = "Parent"):
+      label = "Label", frame = "Frame", stamp = "Stamp", pose = "Pose",
+      width = "Width", height = "Height", depth = "Depth", parent = "Parent"):
     Compound.__init__(self, "map_object_info",
       ["[%s]" % ", ".join(str(identifier) for identifier in identifiers),
-      "[%s, %s, %s, %s, [%s, %s, %s], %s]" % (identifier, type, label,
-      pose, width, height, depth, parent)])
+      "[%s, %s, %s, %s, %s, %s, [%s, %s, %s], %s]" % (identifier, type, label,
+      frame, stamp, pose, width, height, depth, parent)])
     
     self._identifier = identifier
     self._type = type
     self._label = label
+    self._frame = frame
+    self._stamp = stamp
     self._pose = pose
     self._width = width
     self._height = height
@@ -55,6 +60,8 @@ class MapObjectInfo(Compound):
       "identifier": IRI(solution[self._identifier]),
       "type": IRI(solution[self._type]),
       "label": solution[self._label],
+      "frame": solution[self._frame],
+      "stamp": Time(secs = float(solution[self._stamp])),
       "pose": pose,
       "dimensions": {
         "x": float(solution[self._depth]),

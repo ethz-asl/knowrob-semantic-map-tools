@@ -32,6 +32,9 @@ class Publisher(object):
     mapObjectInfoQuery.execute(self.prologClient)
     objectInfo = mapObjectInfoQuery.info
     
+    message.object_acted_on.header.frame_id = objectInfo["frame"]
+    message.object_acted_on.header.stamp = objectInfo["stamp"]
+    
     message.object_acted_on.id = objectInfo["identifier"].iri
     message.object_acted_on.type = objectInfo["type"].iri
     message.object_acted_on.size.x = objectInfo["dimensions"]["x"]

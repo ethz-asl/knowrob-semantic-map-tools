@@ -13,12 +13,12 @@ class Client(object):
     self.prologQueryService = rospy.get_param(
       "~clients/prolog_query/service",
       "/json_prolog/simple_query")
-    self.prologNnextSolutionService = rospy.get_param(
+    self.prologNextSolutionService = rospy.get_param(
       "~clients/prolog_next_solution/service",
       "/json_prolog/next_solution")
     self.prologFinishService = rospy.get_param(
       "~clients/prolog_finish/service",
-      "/json_prolog/finish_query")
+      "/json_prolog/finish")
     
   def query(self, query):
     if isinstance(query, str):
@@ -43,8 +43,8 @@ class Client(object):
   def nextSolution(self, query):
     if query.client == self:
       while not query.finished:
-        rospy.wait_for_service(self.prologNnextSolutionService)
-        request = rospy.ServiceProxy(self.prologNnextSolutionService,
+        rospy.wait_for_service(self.prologNextSolutionService)
+        request = rospy.ServiceProxy(self.prologNextSolutionService,
           PrologNextSolution)    
 
         try:

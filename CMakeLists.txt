@@ -18,6 +18,8 @@ catkin_package(
     json_prolog_msgs
     knowrob_actions
     knowrob_common
+    knowrob_comp_spatial
+    knowrob_comp_temporal
     knowrob_map_tools
     knowrob_objects
     knowrob_semantic_map_msgs

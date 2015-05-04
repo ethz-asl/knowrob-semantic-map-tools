@@ -6,7 +6,9 @@ from GetModelPath import GetModelPath
 from InteractionFindChildren import InteractionFindChildren
 from InteractionObjectInfo import InteractionObjectInfo
 from MapChildObjects import MapChildObjects
+from MapObjectFrame import MapObjectFrame
 from MapObjectInfo import MapObjectInfo
+from MapObjectStamp import MapObjectStamp
 from MapObjectType import MapObjectType
 from ObjectDimensions import ObjectDimensions
 from ObjectPose import ObjectPose
