@@ -10,7 +10,7 @@ publishers:
   interactive_marker:
     topic: "~markers"
     queue_size: 1
-  semantic_map_action:
+  semantic_map_action_feedback:
     topic: "~actions"
     queue_size: 1
     latch: false

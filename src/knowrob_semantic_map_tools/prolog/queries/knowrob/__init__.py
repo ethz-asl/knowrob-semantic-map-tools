@@ -1,4 +1,4 @@
-from ActionProperty import ActionProperty
+from ActionOnObject import ActionOnObject
 from AddObjectWithChildren import AddObjectWithChildren
 from DataProperty import DataProperty
 from GetHandlePath import GetHandlePath

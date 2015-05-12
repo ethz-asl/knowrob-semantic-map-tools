@@ -1,13 +1,11 @@
 from knowrob_semantic_map_tools.prolog.IRI import *
 from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
-class ActionProperty(Compound):
-  def __init__(self, property, action = "Action", object = "Object"):
-    Compound.__init__(self, "action_property",
-      [str(action), str(property), str(object)])
+class ActionOnObject(Compound):
+  def __init__(self, action = "Action", object = "Object"):
+    Compound.__init__(self, "action_on_object", [str(action), str(object)])
     
     self._action = action
-    self._property = property
     self._object = object
     
   def getAction(self):

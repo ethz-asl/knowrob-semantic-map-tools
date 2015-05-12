@@ -2,11 +2,14 @@ import rospy
 from rospy.rostime import *
 
 import time
+import uuid
 
 from geometry_msgs.msg import Pose
 
 from knowrob_semantic_map_msgs.msg import *
 from knowrob_semantic_map_msgs.srv import *
+
+from knowrob_semantic_map_tools.prolog.IRI import *
 
 import Exception
 
@@ -95,6 +98,14 @@ class Server(object):
       for obj in objects:
         object = SemMapObject()
         
+        object.type = obj["type"]
+        
+        if "id" in obj:
+          object.id = str(obj["id"])
+        else:
+          object.id = "%s_%s" % (IRI(object.type).shortName,
+            str(uuid.uuid1()))
+        
         if "frame_id" in obj:
           object.header.frame_id = obj["frame_id"]
 
@@ -104,65 +115,105 @@ class Server(object):
         else:
           object.header.stamp = self.map.header.stamp
         
-        object.id = str(obj["id"])
-        object.type = obj["type"]
-        
         if "size" in obj:
-          object.size.x = obj["size"]["x"]
-          object.size.y = obj["size"]["y"]
-          object.size.z = obj["size"]["z"]
+          if "x" in obj["size"]:
+            object.size.x = obj["size"]["x"]
+          if "y" in obj["size"]:
+            object.size.y = obj["size"]["y"]
+          if "z" in obj["size"]:
+            object.size.z = obj["size"]["z"]
 
         if "position" in obj:
-          object.pose.position.x = obj["position"]["x"];
-          object.pose.position.y = obj["position"]["y"];
-          object.pose.position.z = obj["position"]["z"];
+          if "x" in obj["position"]:
+            object.pose.position.x = obj["position"]["x"]
+          if "y" in obj["position"]:
+            object.pose.position.y = obj["position"]["y"]
+          if "z" in obj["position"]:
+            object.pose.position.z = obj["position"]["z"]
           
         if "orientation" in obj:
-          object.pose.orientation.w = obj["orientation"]["w"]
-          object.pose.orientation.x = obj["orientation"]["x"]
-          object.pose.orientation.y = obj["orientation"]["y"]
-          object.pose.orientation.z = obj["orientation"]["z"]
+          if "w" in obj["orientation"]:
+            object.pose.orientation.w = obj["orientation"]["w"]
+          if "x" in obj["orientation"]:
+            object.pose.orientation.x = obj["orientation"]["x"]
+          if "y" in obj["orientation"]:
+            object.pose.orientation.y = obj["orientation"]["y"]
+          if "z" in obj["orientation"]:
+            object.pose.orientation.z = obj["orientation"]["z"]
+
+        if "actions" in obj:
+          for act in obj["actions"]:
+            action = SemMapAction()
+            
+            action.type = act["type"]
+            
+            if "id" in act:
+              action.id = str(act["id"])
+            else:
+              action.id = "%s_%s" % (IRI(action.type).shortName,
+                str(uuid.uuid1()))
+            
+            action.object_acted_on = object.id
+            
+            self.map.actions.append(action)
+
+            self.addObjectProperties(act, action.id)
+            self.addDataProperties(act, action.id)
+            
+        if "parts" in obj:
+          for part in obj["parts"]:
+            part["part_of"] = object.id
+          
+          objects.extend(obj["parts"])
+          del obj["parts"]
 
         if "part_of" in obj:
           object.part_of = str(obj["part_of"])
           
         self.map.objects.append(object)
-        
-        for key in obj:
-          if key in self.object_properties:
-            if not isinstance(obj[key], list):
-              obj[key] = [obj[key]]
-            
-            for prop_obj in obj[key]:
-              object_property = SemMapObjectProperty()
 
-              object_property.id = self.object_properties[key]
-              object_property.subject = object.id
-              object_property.object = str(prop_obj)
-              
-              self.map.object_properties.append(object_property)
-          if key in self.data_properties:
-            data_property = SemMapDataProperty()
-
-            data_property.id = self.data_properties[key]
-            data_property.subject = object.id
-            
-            if isinstance(obj[key], bool):
-              data_property.value_type = SemMapDataProperty.VALUE_TYPE_BOOL
-            elif isinstance(obj[key], float):
-              data_property.value_type = SemMapDataProperty.VALUE_TYPE_FLOAT
-            elif isinstance(obj[key], int):
-              data_property.value_type = SemMapDataProperty.VALUE_TYPE_INT
-            else:
-              data_property.value_type = SemMapDataProperty.VALUE_TYPE_STRING
-            
-            data_property.value = str(obj[key])
-            
-            self.map.data_properties.append(data_property)
+        self.addObjectProperties(obj, object.id)
+        self.addDataProperties(obj, object.id)
     
     self.getSemanticMapServer = rospy.Service(self.getSemanticMapService,
       GetSemanticMap, self.getSemanticMap)
   
+  def addObjectProperties(self, properties, subject):
+    for key in properties:
+      if key in self.object_properties:
+        if not isinstance(properties[key], list):
+          properties[key] = [properties[key]]
+        
+        for prop_obj in properties[key]:
+          object_property = SemMapObjectProperty()
+
+          object_property.id = self.object_properties[key]
+          object_property.subject = subject
+          object_property.object = str(prop_obj)
+          
+          self.map.object_properties.append(object_property)
+  
+  def addDataProperties(self, properties, subject):
+    for key in properties:
+      if key in self.data_properties:
+        data_property = SemMapDataProperty()
+
+        data_property.id = self.data_properties[key]
+        data_property.subject = subject
+        
+        if isinstance(properties[key], bool):
+          data_property.value_type = SemMapDataProperty.VALUE_TYPE_BOOL
+        elif isinstance(properties[key], float):
+          data_property.value_type = SemMapDataProperty.VALUE_TYPE_FLOAT
+        elif isinstance(properties[key], int):
+          data_property.value_type = SemMapDataProperty.VALUE_TYPE_INT
+        else:
+          data_property.value_type = SemMapDataProperty.VALUE_TYPE_STRING
+        
+        data_property.value = str(properties[key])
+        
+        self.map.data_properties.append(data_property)
+      
   def getSemanticMap(self, request):
     return GetSemanticMapResponse(self.map)
   

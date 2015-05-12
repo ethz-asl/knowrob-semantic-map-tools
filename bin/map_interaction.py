@@ -22,9 +22,9 @@ if __name__ == '__main__':
     "knowrob:'SemanticEnvironmentMap'")
   map = owlIndividualOfQuery.execute(prologClient).individual
   
-  actionPublisher = semantic_map.action.Publisher(prologClient)
-  semanticMapInteractionServer = semantic_map.interaction.Server(
-    prologClient, [map], actionPublisher.publishSemanticMapAction)
+  actionFeedbackPublisher = semantic_map.action.feedback.Publisher()
+  semanticMapInteractionServer = semantic_map.interaction.Server(prologClient,
+    [map], actionFeedbackPublisher.publishSemanticMapActionFeedback)
     
   rospy.spin()
   

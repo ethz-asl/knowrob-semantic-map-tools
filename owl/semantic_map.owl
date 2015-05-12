@@ -25,57 +25,6 @@
         <owl:imports rdf:resource="package://knowrob_common/owl/knowrob.owl"/>
         <owl:imports rdf:resource="package://knowrob_semantic_map_tools/owl/marker_interaction.owl"/>
     </owl:Ontology>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Classes
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://asl.ethz.ch/knowrob/semantic_map.owl#ClosingADoor -->
-
-    <owl:Class rdf:about="&semantic_map;ClosingADoor">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="&marker_interaction;menuEntryTitle"/>
-                <owl:hasValue rdf:datatype="&xsd;string">Close %s</owl:hasValue>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="&knowrob;ClosingAContainerArtifact"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="&knowrob;objectActedOn"/>
-                <owl:someValuesFrom rdf:resource="&knowrob;Door"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://asl.ethz.ch/knowrob/semantic_map.owl#OpeningADoor -->
-
-    <owl:Class rdf:about="&semantic_map;OpeningADoor">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="&marker_interaction;menuEntryTitle"/>
-                <owl:hasValue rdf:datatype="&xsd;string">Open %s</owl:hasValue>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="&knowrob;OpeningAContainerArtifact"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="&knowrob;objectActedOn"/>
-                <owl:someValuesFrom rdf:resource="&knowrob;Door"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
 </rdf:RDF>
 
 

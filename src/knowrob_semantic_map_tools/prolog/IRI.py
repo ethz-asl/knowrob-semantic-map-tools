@@ -46,7 +46,17 @@ class IRI(object):
     return None
   
   fragment = property(getFragment)
+  
+  def getShortName(self):
+    if self.fragment:
+      return self.fragment
+    elif self.suffix:
+      return self.suffix
+    else:
+      return self.iri
 
+  shortName = property(getShortName)
+  
   def __str__(self):
     if self.prefix:
       return "%s:'%s'" % (self.prefix, self.suffix)

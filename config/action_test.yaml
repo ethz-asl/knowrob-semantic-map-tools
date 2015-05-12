@@ -7,6 +7,6 @@ clients:
     service: "json_prolog/finish"
     
 subscribers:
-  semantic_map_action:
+  semantic_map_action_feedback:
     topic: "map_interaction/actions"
     queue_size: 1

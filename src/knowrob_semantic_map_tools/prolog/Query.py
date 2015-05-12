@@ -3,7 +3,7 @@ import uuid
 
 class Query(object):
   def __init__(self, query = None):
-    self.id = uuid.uuid1()    
+    self.id = uuid.uuid1()
     self.query = query
     
     self.client = None

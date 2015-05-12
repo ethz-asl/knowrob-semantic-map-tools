@@ -1,3 +1,11 @@
+knowrob-semantic-map-tools (0.1-10) unstable; urgency=low
+
+  * Now allowing for anonymous objects
+  * Adaptations to support TBOX actions in the map declarations
+  * Fixed prolog queries
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 12 May 2015 11:11:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-9) unstable; urgency=low
 
   * Added frame id and timestamp queries

@@ -53,13 +53,6 @@ if __name__ == '__main__':
   print "Object of object property knowrob:hingedTo for subject map:'Door1':"
   print hingedToQuery.object
 
-  doorActionQuery = knowrob.ActionProperty("knowrob:objectActedOn",
-    object = "knowrob:'Door'")
-  doorActionQuery.execute(prologClient)
-  print "Actions of action property knowrob:objectActedOn with value knowrob:'Door':"
-  for action in doorActionQuery.actions:
-    print action
-
   purchasePriceQuery = knowrob.DataProperty("knowrob:purchasePrice",
     "map:'Cupboard1'")
   purchasePriceQuery.execute(prologClient)
@@ -75,4 +68,10 @@ if __name__ == '__main__':
   stampQuery.execute(prologClient)
   print "Timestamp of object map:'Cupboard1':"
   print time.ctime(stampQuery.stamp.secs)
+
+  actionOnDoorQuery = knowrob.ActionOnObject(object = "map:'Door1'")
+  actionOnDoorQuery.execute(prologClient)
+  print "Actions on object map:'Door1':"
+  for action in actionOnDoorQuery.actions:
+    print action
   

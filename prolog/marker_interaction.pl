@@ -11,6 +11,7 @@
 :- use_module(library('knowrob_objects.pl')).
 :- use_module(library('knowrob_cad_parser.pl')).
 :- use_module(library('action_properties.pl')).
+:- use_module(library('data_properties.pl')).
 
 :- rdf_meta
   get_handle_path(r, ?),
@@ -29,29 +30,10 @@
 % @param Path Found handle path
 %
 get_handle_path(Identifier, Path) :-
-  (
-    rdf_has(Identifier,
-      marker_interaction:pathToInteractiveMarkerHandle,
-      literal(type(_, Path))
-    );
-    rdfs_individual_of(Identifier, Class),
-    class_properties(Class,
-      marker_interaction:pathToInteractiveMarkerHandle,
-      literal(type(_, Path))
-    );
-    rdf_has(Identifier,
-      marker_interaction:pathToInteractiveMarkerHandle,
-      literal(Path)
-    ); 
-    rdfs_individual_of(Identifier, Class),
-    class_properties(Class,
-      marker_interaction:pathToInteractiveMarkerHandle,
-      literal(Path))
-  ), !;
-  class_properties(Identifier,
+  data_property(Identifier,
     marker_interaction:pathToInteractiveMarkerHandle,
-    literal(type(_, Path))
-  ), !.
+    Path
+  ).
 
 %% get_menu_title(?Identifier, ?Title)
 %
@@ -61,29 +43,10 @@ get_handle_path(Identifier, Path) :-
 % @param Title Found menu title
 % 
 get_menu_title(Identifier, Title) :-
-  (
-    rdf_has(Identifier,
-      marker_interaction:menuEntryTitle,
-      literal(type(_, Title))
-    );
-    rdfs_individual_of(Identifier, Class),
-    class_properties(Class,
-      marker_interaction:menuEntryTitle,
-      literal(type(_, Title))
-    );
-    rdf_has(Identifier,
-      marker_interaction:menuEntryTitle,
-      literal(Title)
-    ); 
-    rdfs_individual_of(Identifier, Class),
-    class_properties(Class,
-      marker_interaction:menuEntryTitle,
-      literal(Title))
-  ), !;
-  class_properties(Identifier,
+  data_property(Identifier,
     marker_interaction:menuEntryTitle,
-    literal(type(_, Title))
-  ), !.
+    Title
+  ).
 
 %% interaction_find_children(+Parents, -Children)
 %
@@ -135,8 +98,7 @@ interaction_object_info_1(Object, [Identifier, Type, Label, Pose,
   ),
   findall([ActionIdentifier, ActionTitle],
     (
-      rdfs_individual_of(Object, Class),
-      action_property(ActionIdentifier, knowrob:objectActedOn, Class),
+      action_on_object(ActionIdentifier, Object),
       (
         get_menu_title(ActionIdentifier, _ActionTitle) ->
           ActionTitle = _ActionTitle;

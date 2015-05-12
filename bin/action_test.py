@@ -8,11 +8,11 @@ import roslib; roslib.load_manifest("knowrob_semantic_map_tools")
 
 from knowrob_semantic_map_tools import *
 
-def handleOpeningADoor(action):
-  print "Opening door %s" % action.object_acted_on.id
+def handleOpeningADoor(feedback):
+  print "Opening door %s" % feedback.object_acted_on
 
-def handleClosingADoor(action):
-  print "Closing door %s" % action.object_acted_on.id
+def handleClosingADoor(feedback):
+  print "Closing door %s" % feedback.object_acted_on
 
 if __name__ == '__main__':
   rospy.init_node("action_test")
