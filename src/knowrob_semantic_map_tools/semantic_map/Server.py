@@ -49,15 +49,8 @@ class Server(object):
     self.map.prefixes.append(prefix)
 
     if "prefixes" in map:
-      prefixes = map["prefixes"]
-
-      for pref in prefixes:
-        prefix = SemMapPrefix()
-        
-        prefix.name = pref["name"]
-        prefix.prefix = pref["prefix"]
-        
-        self.map.prefixes.append(prefix)
+      for prefix in map["prefixes"]:
+        self.addPrefix(prefix)
         
     if "imports" in map:
       self.map.imports = map["imports"]
@@ -78,106 +71,159 @@ class Server(object):
 
     self.object_properties = {}
     if "object_properties" in map:
-      object_properties = map["object_properties"]
-      
-      for key in object_properties:
-        value = object_properties[key]
-        self.object_properties[key] = value["id"]
+      for key in map["object_properties"]:
+        self.object_properties[key] = map["object_properties"][key]["id"]
 
     self.data_properties = {}
     if "data_properties" in map:
-      data_properties = map["data_properties"]
-      
-      for key in data_properties:
-        value = data_properties[key]
-        self.data_properties[key] = value["id"]
+      for key in map["data_properties"]:
+        self.data_properties[key] = map["data_properties"][key]["id"]
         
     if "objects" in map:
-      objects = map["objects"]
-      
-      for obj in objects:
-        object = SemMapObject()
-        
-        object.type = obj["type"]
-        
-        if "id" in obj:
-          object.id = str(obj["id"])
-        else:
-          object.id = "%s_%s" % (IRI(object.type).shortName,
-            str(uuid.uuid1()))
-        
-        if "frame_id" in obj:
-          object.header.frame_id = obj["frame_id"]
-
-        if "stamp" in obj:
-          object.header.stamp = Time.from_sec(time.mktime(
-            time.strptime(obj["stamp"].value, "%Y%m%dT%H:%M:%S")))
-        else:
-          object.header.stamp = self.map.header.stamp
-        
-        if "size" in obj:
-          if "x" in obj["size"]:
-            object.size.x = obj["size"]["x"]
-          if "y" in obj["size"]:
-            object.size.y = obj["size"]["y"]
-          if "z" in obj["size"]:
-            object.size.z = obj["size"]["z"]
-
-        if "position" in obj:
-          if "x" in obj["position"]:
-            object.pose.position.x = obj["position"]["x"]
-          if "y" in obj["position"]:
-            object.pose.position.y = obj["position"]["y"]
-          if "z" in obj["position"]:
-            object.pose.position.z = obj["position"]["z"]
-          
-        if "orientation" in obj:
-          if "w" in obj["orientation"]:
-            object.pose.orientation.w = obj["orientation"]["w"]
-          if "x" in obj["orientation"]:
-            object.pose.orientation.x = obj["orientation"]["x"]
-          if "y" in obj["orientation"]:
-            object.pose.orientation.y = obj["orientation"]["y"]
-          if "z" in obj["orientation"]:
-            object.pose.orientation.z = obj["orientation"]["z"]
-
-        if "actions" in obj:
-          for act in obj["actions"]:
-            action = SemMapAction()
-            
-            action.type = act["type"]
-            
-            if "id" in act:
-              action.id = str(act["id"])
-            else:
-              action.id = "%s_%s" % (IRI(action.type).shortName,
-                str(uuid.uuid1()))
-            
-            action.object_acted_on = object.id
-            
-            self.map.actions.append(action)
-
-            self.addObjectProperties(act, action.id)
-            self.addDataProperties(act, action.id)
-            
-        if "parts" in obj:
-          for part in obj["parts"]:
-            part["part_of"] = object.id
-          
-          objects.extend(obj["parts"])
-          del obj["parts"]
-
-        if "part_of" in obj:
-          object.part_of = str(obj["part_of"])
-          
-        self.map.objects.append(object)
-
-        self.addObjectProperties(obj, object.id)
-        self.addDataProperties(obj, object.id)
+      for object in map["objects"]:
+        self.addObject(object)
     
     self.getSemanticMapServer = rospy.Service(self.getSemanticMapService,
       GetSemanticMap, self.getSemanticMap)
   
+  def addPrefix(self, prefix):
+    msg = SemMapPrefix()
+    
+    msg.name = prefix["name"]
+    msg.prefix = prefix["prefix"]
+    
+    self.map.prefixes.append(msg)
+    
+    return msg
+  
+  def addObject(self, object):
+    msg = SemMapObject()
+    
+    msg.type = object["type"]
+    
+    if "id" in object:
+      msg.id = str(object["id"])
+    else:
+      msg.id = "%s_%s" % (IRI(msg.type).shortName, str(uuid.uuid1()))
+    
+    if "frame_id" in object:
+      msg.header.frame_id = object["frame_id"]
+
+    if "stamp" in object:
+      msg.header.stamp = Time.from_sec(time.mktime(
+        time.strptime(object["stamp"].value, "%Y%m%dT%H:%M:%S")))
+    else:
+      msg.header.stamp = self.map.header.stamp
+    
+    if "size" in object:
+      if "x" in object["size"]:
+        msg.size.x = object["size"]["x"]
+      if "y" in object["size"]:
+        msg.size.y = object["size"]["y"]
+      if "z" in object["size"]:
+        msg.size.z = object["size"]["z"]
+
+    if "position" in object:
+      if "x" in object["position"]:
+        msg.pose.position.x = object["position"]["x"]
+      if "y" in object["position"]:
+        msg.pose.position.y = object["position"]["y"]
+      if "z" in object["position"]:
+        msg.pose.position.z = object["position"]["z"]
+      
+    if "orientation" in object:
+      if "w" in object["orientation"]:
+        msg.pose.orientation.w = object["orientation"]["w"]
+      if "x" in object["orientation"]:
+        msg.pose.orientation.x = object["orientation"]["x"]
+      if "y" in object["orientation"]:
+        msg.pose.orientation.y = object["orientation"]["y"]
+      if "z" in object["orientation"]:
+        msg.pose.orientation.z = object["orientation"]["z"]
+
+    if "tasks" in object:
+      for task in object["tasks"]:
+        self.addTask(task, msg.id)
+        
+    if "actions" in object:
+      for action in object["actions"]:
+        self.addAction(action, msg.id)
+        
+    if "part_of" in object:
+      msg.part_of = str(object["part_of"])
+      
+    self.map.objects.append(msg)
+
+    self.addObjectProperties(object, msg.id)
+    self.addDataProperties(object, msg.id)
+    
+    if "parts" in object:
+      for part in object["parts"]:
+        self.addObject(part).part_of = msg.id
+
+    return msg
+          
+  def addAction(self, action, object):
+    msg = SemMapAction()
+    
+    if "type" in action:
+      msg.type = action["type"]
+    else:
+      msg.type = "knowrob:Action"
+    
+    if "id" in action:
+      msg.id = str(action["id"])
+    else:
+      msg.id = "%s_%s" % (IRI(msg.type).shortName, str(uuid.uuid1()))
+    
+    msg.object_acted_on = object
+    
+    self.map.actions.append(msg)
+
+    self.addObjectProperties(action, msg.id)
+    self.addDataProperties(action, msg.id)
+    
+    return msg
+          
+  def addTask(self, task, object):
+    msg = SemMapTask()
+    
+    if "type" in task:
+      msg.type = task["type"]
+    else:
+      msg.type = "knowrob:Action"
+    
+    if "id" in task:
+      msg.id = str(task["id"])
+    else:
+      msg.id = "%s_%s" % (IRI(msg.type).shortName, str(uuid.uuid1()))
+    
+    if "quantification" in task:
+      if task["quantification"] == "intersection_of":
+        msg.quantification = SemMapTask.INTERSECTION_OF
+      elif task["quantification"] == "union_of":
+        msg.quantification = SemMapTask.UNION_OF
+      else:
+        raise Exception(
+          "Invalid quantification for task [%s]: %s" %
+          (msg.id, str(task["quantification"])))
+      
+    if "ordered" in task:
+      msg.ordered = task["ordered"]
+    else:
+      msg.ordered = True
+      
+    if "actions" in task:
+      for action in task["actions"]:
+        msg.actions.append(self.addAction(action, object).id)
+    
+    self.map.tasks.append(msg)
+
+    self.addObjectProperties(task, msg.id)
+    self.addDataProperties(task, msg.id)
+    
+    return msg
+          
   def addObjectProperties(self, properties, subject):
     for key in properties:
       if key in self.object_properties:
