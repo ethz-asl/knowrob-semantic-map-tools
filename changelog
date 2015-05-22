@@ -1,3 +1,9 @@
+knowrob-semantic-map-tools (0.1-14) unstable; urgency=low
+
+  * Added Protege catalog files to gitignore
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 22 May 2015 16:58:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-13) unstable; urgency=low
 
   * Merged task_properties Prolog module into action_properties Prolog
