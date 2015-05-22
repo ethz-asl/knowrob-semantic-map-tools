@@ -13,7 +13,6 @@
 :- use_module(library('object_properties')).
 :- use_module(library('data_properties')).
 :- use_module(library('action_properties')).
-:- use_module(library('task_properties')).
 :- use_module(library('marker_interaction')).
 :- use_module(library('marker_visualization')).
 

@@ -67,12 +67,12 @@ objects:
         hinged_to: "Cupboard1"
         path_to_handle: "package://knowrob_semantic_map_tools/handles/door.dae"
         actions:
-          - id: "OpeningDoor1"
-            type: "OpeningADoor"
+          - type: "knowrob:OpeningADoor"
+            asserted: true
             end_state: "knowrob:ObjectStateOpen"
             menu_entry: "Open %s"
-          - id: "ClosingDoor1"
-            type: "ClosingADoor"
+          - type: "knowrob:ClosingADoor"
+            asserted: true
             end_state: "knowrob:ObjectStateClosed"
             menu_entry: "Close %s"
         parts:

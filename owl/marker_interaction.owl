@@ -36,16 +36,16 @@
     
 
 
-    <!-- http://asl.ethz.ch/knowrob/marker_interaction.owl#interactiveMarker -->
+    <!-- http://asl.ethz.ch/knowrob/marker_interaction.owl#markerInteraction -->
 
-    <owl:DatatypeProperty rdf:about="&marker_interaction;interactiveMarker"/>
+    <owl:DatatypeProperty rdf:about="&marker_interaction;markerInteraction"/>
     
 
 
     <!-- http://asl.ethz.ch/knowrob/marker_interaction.owl#menuEntryTitle -->
 
     <owl:DatatypeProperty rdf:about="&marker_interaction;menuEntryTitle">
-        <rdfs:subPropertyOf rdf:resource="&marker_interaction;interactiveMarker"/>
+        <rdfs:subPropertyOf rdf:resource="&marker_interaction;markerInteraction"/>
         <rdfs:domain rdf:resource="&knowrob;Action"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
@@ -55,7 +55,7 @@
     <!-- http://asl.ethz.ch/knowrob/marker_interaction.owl#pathToInteractiveMarkerHandle -->
 
     <owl:DatatypeProperty rdf:about="&marker_interaction;pathToInteractiveMarkerHandle">
-        <rdfs:subPropertyOf rdf:resource="&marker_interaction;interactiveMarker"/>
+        <rdfs:subPropertyOf rdf:resource="&marker_interaction;markerInteraction"/>
         <rdfs:domain rdf:resource="&knowrob;EnduringThing-Localized"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>

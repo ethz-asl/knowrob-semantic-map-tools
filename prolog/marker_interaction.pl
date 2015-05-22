@@ -16,7 +16,9 @@
 
 :- rdf_meta
   get_handle_path(r, ?),
-  get_menu_title(r, ?).
+  get_menu_title(r, ?),
+  interaction_find_children(t, -),
+  interaction_object_info(t, -).
 
 :- rdf_db:rdf_register_prefix(marker_interaction,
      'http://asl.ethz.ch/knowrob/marker_interaction.owl#',
@@ -85,19 +87,11 @@ interaction_object_info([Object|Rest], Info) :-
 interaction_object_info_1(Object, [Identifier, Type, Label, Pose,
     HandlePath, Actions]) :-
   map_object_info([Object], [Identifier, Type, Label, _, _, Pose, _, _]),
-  (
-    get_handle_path(Object, HandlePath) ->
-      true;
-      HandlePath = ''
-  ),
+  get_handle_path(Object, HandlePath),
   findall([ActionIdentifier, ActionTitle],
     (
       action_on_object(ActionIdentifier, Object),
-      (
-        get_menu_title(ActionIdentifier, ActionTitle) ->
-          true;
-          ActionTitle = ''
-      )
+      get_menu_title(ActionIdentifier, ActionTitle)
     ),
     Actions
   ).

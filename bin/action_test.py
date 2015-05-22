@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import re
 
 import rospy
 import roslib; roslib.load_manifest("knowrob_semantic_map_tools")
@@ -22,8 +23,10 @@ if __name__ == '__main__':
   args = parser.parse_args(rospy.myargv()[1:])
   
   actionSubscriber = semantic_map.action.Subscriber()
-  actionSubscriber.addActionHandler("OpeningADoor", handleOpeningADoor)
-  actionSubscriber.addActionHandler("ClosingADoor", handleClosingADoor)
+  actionSubscriber.addActionHandler(re.compile(".*#OpeningADoor.*"),
+    handleOpeningADoor)
+  actionSubscriber.addActionHandler(re.compile(".*#ClosingADoor.*"),
+    handleClosingADoor)
   
   rospy.spin()
   

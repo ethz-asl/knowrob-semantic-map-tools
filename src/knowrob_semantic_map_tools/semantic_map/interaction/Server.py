@@ -74,10 +74,10 @@ class Server(object):
     return markers
 
   def addInteractiveMarkers(self, identifiers, markers):
-    visualizatonObjectInfoQuery = knowrob.InteractionObjectInfo(identifiers)
-    visualizatonObjectInfoQuery.execute(self.prologClient)
+    interactionObjectInfoQuery = knowrob.InteractionObjectInfo(identifiers)
+    interactionObjectInfoQuery.execute(self.prologClient)
     
-    for info in visualizatonObjectInfoQuery.infos:
+    for info in interactionObjectInfoQuery.infos:
       identifier = info["identifier"]
       type = info["type"]
       description = info["label"]
@@ -236,7 +236,8 @@ class Server(object):
     if self.actionHandler:
       marker = self.markers[feedback.marker_name]
       
-      self.actionHandler(feedback,
-        marker["menu_entries"][feedback.menu_entry_id]["identifier"],
-        marker["identifier"])
+      if marker["menu_entries"][feedback.menu_entry_id]["identifier"]:
+        self.actionHandler(feedback,
+          marker["menu_entries"][feedback.menu_entry_id]["identifier"],
+          marker["identifier"])
   

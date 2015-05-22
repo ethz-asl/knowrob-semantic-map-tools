@@ -141,10 +141,6 @@ class Server(object):
       if "z" in object["orientation"]:
         msg.pose.orientation.z = object["orientation"]["z"]
 
-    if "tasks" in object:
-      for task in object["tasks"]:
-        self.addTask(task, msg.id)
-        
     if "actions" in object:
       for action in object["actions"]:
         self.addAction(action, msg.id)
@@ -176,51 +172,32 @@ class Server(object):
     else:
       msg.id = "%s_%s" % (IRI(msg.type).shortName, str(uuid.uuid1()))
     
+    if "asserted" in action:
+      msg.asserted = action["asserted"]
+      
     msg.object_acted_on = object
-    
+
+    if "actions" in action:
+      for subaction in action["actions"]:
+        msg.subactions.append(self.addAction(subaction, object).id)
+        
+    if "quantification" in action:
+      if action["quantification"] == "intersection_of":
+        msg.quantification = SemMapAction.INTERSECTION_OF
+      elif action["quantification"] == "union_of":
+        msg.quantification = SemMapAction.UNION_OF
+      else:
+        raise Exception(
+          "Invalid quantification for action [%s]: %s" %
+          (msg.id, str(action["quantification"])))
+      
+    if "unordered" in action:
+      msg.unordered = action["unordered"]
+
     self.map.actions.append(msg)
 
     self.addObjectProperties(action, msg.id)
     self.addDataProperties(action, msg.id)
-    
-    return msg
-          
-  def addTask(self, task, object):
-    msg = SemMapTask()
-    
-    if "type" in task:
-      msg.type = task["type"]
-    else:
-      msg.type = "knowrob:Action"
-    
-    if "id" in task:
-      msg.id = str(task["id"])
-    else:
-      msg.id = "%s_%s" % (IRI(msg.type).shortName, str(uuid.uuid1()))
-    
-    if "quantification" in task:
-      if task["quantification"] == "intersection_of":
-        msg.quantification = SemMapTask.INTERSECTION_OF
-      elif task["quantification"] == "union_of":
-        msg.quantification = SemMapTask.UNION_OF
-      else:
-        raise Exception(
-          "Invalid quantification for task [%s]: %s" %
-          (msg.id, str(task["quantification"])))
-      
-    if "ordered" in task:
-      msg.ordered = task["ordered"]
-    else:
-      msg.ordered = True
-      
-    if "actions" in task:
-      for action in task["actions"]:
-        msg.actions.append(self.addAction(action, object).id)
-    
-    self.map.tasks.append(msg)
-
-    self.addObjectProperties(task, msg.id)
-    self.addDataProperties(task, msg.id)
     
     return msg
           
