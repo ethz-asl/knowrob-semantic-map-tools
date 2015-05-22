@@ -5,6 +5,8 @@ from tf_conversions import *
 from knowrob_semantic_map_tools.prolog.IRI import *
 from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
+from knowrob_semantic_map_tools.prolog.queries.knowrob.ObjectPose import *
+
 class InteractionObjectInfo(Compound):
   def __init__(self, identifiers, identifier = "Identifier",
       type = "Type", label = "Label", pose = "Pose",
@@ -14,6 +16,7 @@ class InteractionObjectInfo(Compound):
       "[%s, %s, %s, %s, %s, %s]" % (identifier, type, label, pose,
       handlePath, actions)])
     
+    self._identifiers = identifiers
     self._identifier = identifier
     self._type = type
     self._pose = pose
@@ -38,17 +41,6 @@ class InteractionObjectInfo(Compound):
   infos = property(getInfos)
 
   def solutionToInfo(self, solution):
-    m = solution[self._pose]
-    m = [
-      [m[0], m[1], m[2], m[3]],
-      [m[4], m[5], m[6], m[7]],
-      [m[8], m[9], m[10], m[11]],
-      [m[12], m[13], m[14], m[15]]
-    ]
-    
-    frame = fromMatrix(numpy.array(m))
-    tf = toTf(frame)
-    
     actions = []
     for action in solution[self._actions]:
       actions.append({
@@ -60,7 +52,7 @@ class InteractionObjectInfo(Compound):
       "identifier": IRI(solution[self._identifier]),
       "type": IRI(solution[self._type]),
       "label": solution[self._label],
-      "tf": tf,
+      "tf": ObjectPose(pose = self._pose).solutionToTf(solution),
       "handle": solution[self._handlePath],
       "actions": actions
     }

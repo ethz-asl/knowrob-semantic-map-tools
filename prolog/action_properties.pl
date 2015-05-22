@@ -62,7 +62,7 @@ action_property_some(Action, Property, Class) :-
 % 
 action_property_some_distinct(Action, Property, Class) :-
   setof(Action2,
-    action_property_some(Action, Property, Class),
+    action_property_some(Action2, Property, Class),
     Actions
   ),  
   member(Action, Actions),
@@ -97,7 +97,7 @@ action_property_has(Action, Property, Value) :-
 % 
 action_property_has_distinct(Action, Property, Value) :-
   setof(Action2,
-    action_property_has(Action, Property, Value),
+    action_property_has(Action2, Property, Value),
     Actions
   ),
   member(Action, Actions),

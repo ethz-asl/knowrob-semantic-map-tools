@@ -44,29 +44,10 @@ visualization_object_info([Object|Rest], Info) :-
 
 visualization_object_info_1(Object, [Identifier, Type, Label, Pose,
     [Width, Height, Depth], ModelPath]) :-
-  Identifier = Object,
-  rdfs_label(Object, Label),
-  map_object_type(Object, Type),
+  map_object_info([Object], [Identifier, Type, Label, _, _, Pose,
+    [Width, Height, Depth], _]),
   (
-    current_object_pose(Object, _Pose) ->
-      Pose = _Pose;
-      Pose = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ),
-  (
-    map_object_dimensions(Object, _Width, _Depth, _Height) ->
-      (
-        Width = _Width,
-        Height = _Height,
-        Depth = _Depth
-      );
-      (
-        Width = 0,
-        Height = 0,
-        Depth = 0
-      )
-  ),
-  (
-    get_model_path(Object, _ModelPath) ->
-      ModelPath = _ModelPath;
+    get_model_path(Object, ModelPath) ->
+      true;
       ModelPath = ''
   ).

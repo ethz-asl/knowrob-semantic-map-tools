@@ -2,7 +2,8 @@ from knowrob_semantic_map_tools.prolog.IRI import *
 from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
 class DataProperty(Compound):
-  def __init__(self, property, subject = "Subject", value = "Value"):
+  def __init__(self, property = "Property", subject = "Subject",
+      value = "Value"):
     Compound.__init__(self, "data_property",
       [str(subject), str(property), value])
     

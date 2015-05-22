@@ -6,6 +6,7 @@ class InteractionFindChildren(Compound):
     Compound.__init__(self, "interaction_find_children",
       ["[%s]" % ",".join(str(parent) for parent in parents), children])
     
+    self._parents = parents
     self._children = children
 
   def getChildren(self):

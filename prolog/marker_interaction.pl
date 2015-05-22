@@ -10,6 +10,7 @@
 :- use_module(library('semantic_map_utils.pl')).
 :- use_module(library('knowrob_objects.pl')).
 :- use_module(library('knowrob_cad_parser.pl')).
+:- use_module(library('semantic_map.pl')).
 :- use_module(library('action_properties.pl')).
 :- use_module(library('data_properties.pl')).
 
@@ -83,25 +84,18 @@ interaction_object_info([Object|Rest], Info) :-
 
 interaction_object_info_1(Object, [Identifier, Type, Label, Pose,
     HandlePath, Actions]) :-
-  Identifier = Object,
-  map_object_type(Object, Type),
-  rdfs_label(Object, Label),
+  map_object_info([Object], [Identifier, Type, Label, _, _, Pose, _, _]),
   (
-    current_object_pose(Object, _Pose) ->
-      Pose = _Pose;
-      Pose = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ),
-  (
-    get_handle_path(Object, _HandlePath) ->
-      HandlePath = _HandlePath;
+    get_handle_path(Object, HandlePath) ->
+      true;
       HandlePath = ''
   ),
   findall([ActionIdentifier, ActionTitle],
     (
       action_on_object(ActionIdentifier, Object),
       (
-        get_menu_title(ActionIdentifier, _ActionTitle) ->
-          ActionTitle = _ActionTitle;
+        get_menu_title(ActionIdentifier, ActionTitle) ->
+          true;
           ActionTitle = ''
       )
     ),

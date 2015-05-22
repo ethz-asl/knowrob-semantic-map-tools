@@ -36,7 +36,7 @@ owl_parse_string(String) :-
   ),
   (
     rdf(_, 'http://www.w3.org/2002/07/owl#imports', Import_URL),
-    owl_parse_imports(Import_URL, [Import_URL|Imported]);
+    owl_parse_imports(Import_URL, [Import_URL]);
     true
   ),
   assert(owl_parsed).

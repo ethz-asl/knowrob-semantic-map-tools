@@ -21,6 +21,6 @@ object_property(Subject, Property, Object) :-
     rdf_has(Subject, Property, Object);
     rdfs_individual_of(Subject, Class),
     class_properties(Class, Property, Object);
-    rdf_has(Subject, Property, literal(Value))
+    rdf_has(Subject, Property, literal(Object))
   ), !;
   class_properties(Subject, Property, Object), !.

@@ -5,6 +5,7 @@ class MapObjectFrame(Compound):
   def __init__(self, object, frame = "Frame"):
     Compound.__init__(self, "map_object_frame", [str(object), frame])
     
+    self._object = object
     self._frame = frame
 
   def getFrame(self):

@@ -6,6 +6,7 @@ class MapChildObjects(Compound):
     Compound.__init__(self, "map_child_objects",
       [str(parent), children])
     
+    self._parent = parent
     self._children = children
 
   def getChildren(self):

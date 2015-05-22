@@ -5,6 +5,7 @@ class MapObjectType(Compound):
   def __init__(self, object, type = "Type"):
     Compound.__init__(self, "map_object_type", [str(object), type])
     
+    self._object = object
     self._type = type
 
   def getType(self):

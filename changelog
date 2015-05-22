@@ -1,3 +1,9 @@
+knowrob-semantic-map-tools (0.1-12) unstable; urgency=low
+
+  * Prolog query cleanups
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 22 May 2015 07:10:00 +0100
+ 
 knowrob-semantic-map-tools (0.1-11) unstable; urgency=low
 
   * Adaptations to support tasks in the map declarations

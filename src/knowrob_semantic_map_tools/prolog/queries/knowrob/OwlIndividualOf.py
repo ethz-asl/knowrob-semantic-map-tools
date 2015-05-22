@@ -5,6 +5,7 @@ class OwlIndividualOf(Compound):
   def __init__(self, type, individual = "Individual"):
     Compound.__init__(self, "owl_individual_of", [str(individual), type])
 
+    self._type = type
     self._individual = individual
   
   def getIndividual(self):

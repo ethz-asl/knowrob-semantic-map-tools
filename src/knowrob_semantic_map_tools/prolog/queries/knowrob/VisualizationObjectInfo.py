@@ -5,6 +5,10 @@ from tf_conversions import *
 from knowrob_semantic_map_tools.prolog.IRI import *
 from knowrob_semantic_map_tools.prolog.queries.Compound import *
 
+from knowrob_semantic_map_tools.prolog.queries.knowrob.ObjectPose import *
+from knowrob_semantic_map_tools.prolog.queries.knowrob.ObjectDimensions \
+  import *
+
 class VisualizationObjectInfo(Compound):
   def __init__(self, identifiers, identifier = "Identifier", type = "Type",
       label = "Label", pose = "Pose", width = "Width", height = "Height",
@@ -14,6 +18,7 @@ class VisualizationObjectInfo(Compound):
       "[%s, %s, %s, %s, [%s, %s, %s], %s]" % (identifier, type, label,
       pose, width, height, depth, modelPath)])
     
+    self._identifiers = identifiers
     self._identifier = identifier
     self._type = type
     self._label = label
@@ -40,26 +45,13 @@ class VisualizationObjectInfo(Compound):
   infos = property(getInfos)
 
   def solutionToInfo(self, solution):
-    m = solution[self._pose]
-    m = [
-      [m[0], m[1], m[2], m[3]],
-      [m[4], m[5], m[6], m[7]],
-      [m[8], m[9], m[10], m[11]],
-      [m[12], m[13], m[14], m[15]]
-    ]
-    
-    frame = fromMatrix(numpy.array(m))
-    tf = toTf(frame)
-    
     return {
       "identifier": IRI(solution[self._identifier]),
       "type": IRI(solution[self._type]),
       "label": solution[self._label],
-      "tf": tf,
-      "dimensions": {
-        "x": float(solution[self._depth]),
-        "y": float(solution[self._width]),
-        "z": float(solution[self._height]),
-      },
+      "tf": ObjectPose(pose = self._pose).solutionToTf(solution),
+      "dimensions": ObjectDimensions(width = self._width,
+        height = self._height, depth = self._depth).
+        solutionToDimensions(solution),
       "model": solution[self._modelPath]
     }

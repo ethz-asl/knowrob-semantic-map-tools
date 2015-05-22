@@ -31,27 +31,23 @@ map_object_info_1(Object, [Identifier, Type, Label, Frame, Stamp, Pose,
   map_object_type(Object, Type),
   rdfs_label(Object, Label),
   (
-    map_object_frame(Object, _Frame) ->
-      Frame = _Frame;
+    map_object_frame(Object, Frame) ->
+      true;
       Frame = ''
   ),
   (
-    map_object_stamp(Object, _Stamp) ->
-      Stamp = _Stamp;
+    map_object_stamp(Object, Stamp) ->
+      true;
       Stamp = 0
   ),
   (
-    current_object_pose(Object, _Pose) ->
-      Pose = _Pose;
+    current_object_pose(Object, Pose) ->
+      true;
       Pose = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ),
   (
-    map_object_dimensions(Object, _Width, _Depth, _Height) ->
-      (
-        Width = _Width,
-        Height = _Height,
-        Depth = _Depth
-      );
+    map_object_dimensions(Object, Width, Depth, Height) ->
+      true;
       (
         Width = 0,
         Height = 0,
@@ -59,8 +55,8 @@ map_object_info_1(Object, [Identifier, Type, Label, Frame, Stamp, Pose,
       )
   ),
   (
-    map_child_object(_Parent, Object) ->
-      Parent = _Parent;
+    map_child_object(Parent, Object) ->
+      true;
       map_instance(Parent)
   ).
 
